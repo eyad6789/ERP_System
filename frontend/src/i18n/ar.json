@@ -26,6 +26,17 @@
     "locked": "مقفل — تصريح غير كافٍ",
     "loading": "جارٍ التحميل…"
   },
+  "dashboard": {
+    "totalUsers": "إجمالي المستخدمين",
+    "totalRoles": "الأدوار",
+    "events7d": "أحداث التدقيق (7 أيام)",
+    "denied7d": "مرفوضة (7 أيام)",
+    "clearanceDistribution": "توزيع التصاريح",
+    "auditActivity": "نشاط التدقيق (آخر 7 أيام)",
+    "recentAudit": "النشاط الأخير",
+    "granted": "مسموح",
+    "denied": "مرفوض"
+  },
   "clearance": {
     "1": "عام",
     "2": "مقيد",

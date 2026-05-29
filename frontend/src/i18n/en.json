@@ -26,6 +26,17 @@
     "locked": "Locked — insufficient clearance",
     "loading": "Loading…"
   },
+  "dashboard": {
+    "totalUsers": "Total users",
+    "totalRoles": "Roles",
+    "events7d": "Audit events (7d)",
+    "denied7d": "Denied (7d)",
+    "clearanceDistribution": "Clearance distribution",
+    "auditActivity": "Audit activity (last 7 days)",
+    "recentAudit": "Recent activity",
+    "granted": "Granted",
+    "denied": "Denied"
+  },
   "clearance": {
     "1": "Public",
     "2": "Restricted",

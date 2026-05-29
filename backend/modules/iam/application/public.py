@@ -6,6 +6,7 @@ or iam.interfaces. This is the module's contract.
 
 from __future__ import annotations
 
+from .dashboard import build_dashboard_summary
 from .services import (
     authenticate,
     build_permission_payload,
@@ -17,6 +18,7 @@ from .services import (
 
 __all__ = [
     "authenticate",
+    "build_dashboard_summary",
     "build_permission_payload",
     "can_access_module",
     "can_read_sensitivity",

@@ -12,7 +12,7 @@ import { AuthProvider } from '../auth/AuthProvider'
 describe('App smoke', () => {
   it('renders the login route inside the real provider tree', async () => {
     // No session: /api/me rejects, so RequireAuth redirects to /login.
-    vi.spyOn(global, 'fetch').mockResolvedValue(
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify({ detail: 'Authentication required.' }), { status: 403 }),
     )
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
