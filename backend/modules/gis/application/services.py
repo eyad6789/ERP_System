@@ -11,10 +11,35 @@ from django.db.models import Q, QuerySet
 
 from ..infrastructure.models import Site
 
+_ORDERING_WHITELIST = frozenset({"name_en", "site_type", "classification"})
+
 
 def visible_sites(user: Any) -> QuerySet[Site]:
     """Map queryset limited to sites at or below the user's clearance."""
     return Site.objects.filter(classification__lte=user.clearance)
+
+
+def list_sites(user: Any, *, q: str = "", ordering: str = "") -> QuerySet[Site]:
+    """Clearance-filtered site list with optional text search and ordering.
+
+    `q` is matched case-insensitively across the bilingual name/info fields.
+    `ordering` accepts a whitelisted field (name_en, site_type, classification)
+    optionally prefixed with '-' for descending; unknown fields are ignored so
+    the default model ordering applies.
+    """
+    sites = visible_sites(user)
+    q = q.strip()
+    if q:
+        sites = sites.filter(
+            Q(name_ar__icontains=q)
+            | Q(name_en__icontains=q)
+            | Q(info_ar__icontains=q)
+            | Q(info_en__icontains=q)
+        )
+    field = ordering.lstrip("-")
+    if field in _ORDERING_WHITELIST:
+        sites = sites.order_by(ordering)
+    return sites
 
 
 def serialize_site(site: Site) -> dict[str, Any]:

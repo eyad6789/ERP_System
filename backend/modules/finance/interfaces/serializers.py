@@ -27,3 +27,26 @@ class ContractSerializer(serializers.ModelSerializer):
             "classification",
             "owner",
         ]
+
+
+class ContractWriteSerializer(serializers.ModelSerializer):
+    """Write serializer for contract create/update. ``classification`` must be an
+    int in 1-4; the over-clearance guard (403) lives in the view, not here."""
+
+    classification = serializers.IntegerField(min_value=1, max_value=4)
+
+    class Meta:
+        model = Contract
+        fields = [
+            "title_ar",
+            "title_en",
+            "vendor",
+            "value",
+            "progress",
+            "status",
+            "classification",
+        ]
+
+
+class StatusUpdateSerializer(serializers.Serializer):
+    status = serializers.CharField(max_length=16)

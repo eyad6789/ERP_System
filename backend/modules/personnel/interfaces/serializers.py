@@ -37,3 +37,27 @@ class PersonDetailSerializer(PersonListSerializer):
             "joined_year",
             "contract_type",
         ]
+
+
+class PersonWriteSerializer(serializers.ModelSerializer):
+    """Write serializer for create/update. Clearance is enforced in the view
+    against the caller's clearance; here we only validate the value range."""
+
+    class Meta:
+        model = Person
+        fields = [
+            "name_ar",
+            "name_en",
+            "rank_ar",
+            "rank_en",
+            "classification",
+            "status",
+            "attendance",
+            "joined_year",
+            "contract_type",
+        ]
+
+    def validate_classification(self, value: int) -> int:
+        if value not in (1, 2, 3, 4):
+            raise serializers.ValidationError("classification must be an integer 1-4.")
+        return value

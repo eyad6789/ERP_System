@@ -2,6 +2,24 @@
 
 from __future__ import annotations
 
-from .services import list_documents, module_summary, record_full_read, search, serialize_detail
+from .services import (
+    add_version,
+    create_document,
+    list_documents,
+    module_summary,
+    record_full_read,
+    search,
+    serialize_detail,
+    update_document,
+)
 
-__all__ = ["list_documents", "module_summary", "record_full_read", "search", "serialize_detail"]
+__all__ = [
+    "add_version",
+    "create_document",
+    "list_documents",
+    "module_summary",
+    "record_full_read",
+    "search",
+    "serialize_detail",
+    "update_document",
+]

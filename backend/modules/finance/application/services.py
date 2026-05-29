@@ -59,10 +59,35 @@ def budget_summary(user: Any) -> dict[str, Any]:
     }
 
 
-def list_contracts(user: Any) -> list[dict[str, Any]]:
-    """All contracts, with title/vendor/value withheld for over-clearance rows."""
+_ORDERING_WHITELIST = frozenset({"title_en", "value", "progress", "status", "classification"})
+
+
+def list_contracts(
+    user: Any,
+    *,
+    query: str = "",
+    ordering: str = "",
+) -> list[dict[str, Any]]:
+    """All contracts, with title/vendor/value withheld for over-clearance rows.
+
+    Optional ``query`` filters (icontains) over title_ar/title_en/vendor; optional
+    ``ordering`` sorts by a whitelisted field ('-' prefix = descending). Unknown
+    ordering fields are ignored so the default model ordering applies.
+    """
+    contracts = Contract.objects.select_related("owner").all()
+
+    query = query.strip()
+    if query:
+        contracts = contracts.filter(
+            Q(title_ar__icontains=query) | Q(title_en__icontains=query) | Q(vendor__icontains=query)
+        )
+
+    field = ordering.lstrip("-")
+    if field in _ORDERING_WHITELIST:
+        contracts = contracts.order_by(ordering)
+
     items: list[dict[str, Any]] = []
-    for contract in Contract.objects.select_related("owner").all():
+    for contract in contracts:
         visible = iam.can_read_sensitivity(user.clearance, contract.classification)
         items.append(
             {
@@ -95,6 +120,31 @@ def serialize_contract(contract: Contract) -> dict[str, Any]:
         "owner": contract.owner.username if contract.owner else None,
         "updated_at": contract.updated_at.isoformat(),
     }
+
+
+def create_contract(data: dict[str, Any], owner: Any) -> Contract:
+    """Persist a new contract owned by ``owner`` (clearance guard lives in view)."""
+    return Contract.objects.create(owner=owner, **data)
+
+
+def update_contract(contract: Contract, data: dict[str, Any]) -> Contract:
+    """Apply a partial update to ``contract`` (clearance guard lives in view)."""
+    for field, value in data.items():
+        setattr(contract, field, value)
+    contract.save()
+    return contract
+
+
+def advance_contract(contract: Contract, status: str) -> Contract:
+    """Move a contract to a new (already validated) workflow status."""
+    contract.status = status
+    contract.save(update_fields=["status", "updated_at"])
+    return contract
+
+
+def delete_contract(contract: Contract) -> None:
+    """Remove a contract (clearance guard lives in the view)."""
+    contract.delete()
 
 
 def export_rows(user: Any) -> list[dict[str, Any]]:

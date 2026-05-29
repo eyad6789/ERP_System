@@ -8,6 +8,8 @@ from __future__ import annotations
 from typing import Any
 
 from django.db.models import Q, QuerySet
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.request import Request
 
 from ..infrastructure.models import Asset
 
@@ -15,6 +17,32 @@ from ..infrastructure.models import Asset
 def visible_assets(user: Any) -> QuerySet[Asset]:
     """Asset queryset limited to records at or below the user's clearance."""
     return Asset.objects.filter(classification__lte=user.clearance)
+
+
+def filter_by_query(assets: QuerySet[Asset], query: str) -> QuerySet[Asset]:
+    """Case-insensitive contains filter over the asset's text fields."""
+    return assets.filter(
+        Q(name_ar__icontains=query)
+        | Q(name_en__icontains=query)
+        | Q(asset_type__icontains=query)
+        | Q(location__icontains=query)
+    )
+
+
+def enforce_classification_ceiling(request: Request, classification: int, *, action: str) -> None:
+    """Reject (403 + DENIED audit) an attempt to create/set a classification ABOVE
+    the caller's own clearance. Mirrors enforce_object_clearance for write paths."""
+    from modules.iam.application import public as iam
+
+    user_clearance = getattr(request.user, "clearance", 0)
+    if not iam.can_read_sensitivity(user_clearance, classification):
+        iam.record_audit(
+            request,
+            action=action,
+            target=f"Asset:classification={classification}",
+            result="DENIED",
+        )
+        raise PermissionDenied()
 
 
 def module_summary(user: Any) -> dict[str, Any]:

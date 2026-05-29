@@ -7,17 +7,37 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.db.models import F
+from django.db.models import F, Q, QuerySet
 
 from modules.iam.application import public as iam
 
-from ..infrastructure.models import Document
+from ..infrastructure.models import Document, DocumentVersion
+
+ORDERING_WHITELIST: frozenset[str] = frozenset(
+    {"title_en", "classification", "updated_at", "version"}
+)
 
 
-def list_documents(user: Any) -> list[dict[str, Any]]:
-    """All documents, with title withheld for records above the user's clearance."""
+def _ordered_queryset(query: str, ordering: str) -> QuerySet[Document]:
+    """Build the list queryset honouring optional search + whitelisted ordering."""
+    qs = Document.objects.select_related("owner").all()
+    query = query.strip()
+    if query:
+        qs = qs.filter(Q(title_ar__icontains=query) | Q(title_en__icontains=query))
+    field = ordering.lstrip("-")
+    if field in ORDERING_WHITELIST:
+        qs = qs.order_by(ordering)
+    return qs
+
+
+def list_documents(user: Any, query: str = "", ordering: str = "") -> list[dict[str, Any]]:
+    """All documents, with title withheld for records above the user's clearance.
+
+    Optional `query` filters (icontains) over titles; optional `ordering` sorts
+    by a whitelisted field ('-' prefix = descending). Unknown fields are ignored.
+    """
     items: list[dict[str, Any]] = []
-    for doc in Document.objects.select_related("owner").all():
+    for doc in _ordered_queryset(query, ordering):
         visible = iam.can_read_sensitivity(user.clearance, doc.classification)
         items.append(
             {
@@ -110,3 +130,45 @@ def serialize_detail(document: Document) -> dict[str, Any]:
             for v in document.versions.all()
         ],
     }
+
+
+def create_document(user: Any, data: dict[str, Any]) -> Document:
+    """Persist a new document (owned by `user`) and its initial version (number=1)."""
+    document = Document.objects.create(
+        title_ar=data["title_ar"],
+        title_en=data["title_en"],
+        body=data.get("body", ""),
+        classification=data["classification"],
+        owner=user if getattr(user, "is_authenticated", False) else None,
+        version=1,
+    )
+    DocumentVersion.objects.create(
+        document=document,
+        number=1,
+        author=user if getattr(user, "is_authenticated", False) else None,
+    )
+    return document
+
+
+def update_document(document: Document, data: dict[str, Any]) -> Document:
+    """Apply a partial update to a document (only supplied fields are written)."""
+    for field in ("title_ar", "title_en", "body", "classification"):
+        if field in data:
+            setattr(document, field, data[field])
+    document.save()
+    return document
+
+
+def add_version(user: Any, document: Document) -> Document:
+    """Bump the document version by one and snapshot a DocumentVersion from its body."""
+    document.version = F("version") + 1
+    document.save(update_fields=["version"])
+    document.refresh_from_db(fields=["version"])
+    DocumentVersion.objects.create(
+        document=document,
+        number=document.version,
+        note_ar=document.body[:200],
+        note_en=document.body[:200],
+        author=user if getattr(user, "is_authenticated", False) else None,
+    )
+    return document

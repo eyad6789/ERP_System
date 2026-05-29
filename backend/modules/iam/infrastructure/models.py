@@ -42,6 +42,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)  # type: ignore[misc]
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
+    mfa_secret = models.CharField(max_length=64, blank=True, default="")
+    mfa_enabled = models.BooleanField(default=False)
 
     objects = UserManager()
 

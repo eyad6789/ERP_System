@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 
 from modules.iam.application import public as iam
 
@@ -44,6 +44,46 @@ def update_status(incident: Incident, status: str) -> Incident:
     incident.status = status
     incident.save(update_fields=["status", "updated_at"])
     return incident
+
+
+def create_incident(data: dict[str, Any]) -> Incident:
+    """Create an incident (the over-clearance guard runs in the view first)."""
+    return Incident.objects.create(**data)
+
+
+def update_incident(incident: Incident, data: dict[str, Any]) -> Incident:
+    """Apply a partial update (only called after the clearance checks pass)."""
+    for field, value in data.items():
+        setattr(incident, field, value)
+    incident.save()
+    return incident
+
+
+def delete_incident(incident: Incident) -> None:
+    """Delete an incident (only called after the clearance check passes)."""
+    incident.delete()
+
+
+SORTABLE_FIELDS = {"title_en", "severity", "status", "reported_date"}
+
+
+def filter_incidents(
+    incidents: QuerySet[Incident],
+    *,
+    query: str = "",
+    ordering: str = "",
+) -> QuerySet[Incident]:
+    """Apply optional icontains title search and a whitelisted ordering.
+
+    Unknown ordering keys are ignored; the clearance filter is applied upstream.
+    """
+    query = query.strip()
+    if query:
+        incidents = incidents.filter(Q(title_ar__icontains=query) | Q(title_en__icontains=query))
+    field = ordering.lstrip("-")
+    if field in SORTABLE_FIELDS:
+        incidents = incidents.order_by(ordering)
+    return incidents
 
 
 def module_summary(user: Any) -> dict[str, Any]:

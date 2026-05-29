@@ -127,6 +127,30 @@ class AuditStatsView(APIView):
         return Response(audit_query.build_audit_stats())
 
 
+class ActivityView(APIView):
+    """Most-recent audit rows for a single target (object activity timeline).
+
+    Requires the `audit` module on the user's role. Filters on the
+    `target_type` / `target_id` query params; returns up to 50 rows newest-first.
+    """
+
+    permission_classes = [IsAuthenticated, HasModuleAccess]
+    required_module = "audit"
+
+    def get(self, request: Request) -> Response:
+        target_type = request.query_params.get("target_type", "").strip()
+        target_id = request.query_params.get("target_id", "").strip()
+
+        qs = AuditEvent.objects.all()
+        if target_type:
+            qs = qs.filter(target_type=target_type)
+        if target_id:
+            qs = qs.filter(target_id=target_id)
+        rows = list(qs.order_by("-ts")[:50])
+
+        return Response(AuditEventSerializer(rows, many=True).data)
+
+
 def _int_param(request: Request, key: str, *, default: int) -> int:
     """Parse a positive integer query param, falling back to `default`."""
     raw = request.query_params.get(key)
