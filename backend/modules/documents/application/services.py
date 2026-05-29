@@ -36,6 +36,51 @@ def list_documents(user: Any) -> list[dict[str, Any]]:
     return items
 
 
+def module_summary(user: Any) -> dict[str, Any]:
+    """Clearance-respecting document counts (locked rows are counted, never read)."""
+    total = 0
+    accessible = 0
+    by_level: dict[int, int] = dict.fromkeys(range(1, 5), 0)
+    for classification in Document.objects.values_list("classification", flat=True):
+        total += 1
+        by_level[classification] = by_level.get(classification, 0) + 1
+        if iam.can_read_sensitivity(user.clearance, classification):
+            accessible += 1
+    return {
+        "key": "documents",
+        "total": total,
+        "accessible": accessible,
+        "locked": total - accessible,
+        "by_classification": [{"level": level, "count": by_level[level]} for level in range(1, 5)],
+    }
+
+
+def search(user: Any, query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Case-insensitive title search over documents the user is cleared to see."""
+    query = query.strip()
+    if not query:
+        return []
+    results: list[dict[str, Any]] = []
+    matches = Document.objects.filter(title_ar__icontains=query) | Document.objects.filter(
+        title_en__icontains=query
+    )
+    for doc in matches.distinct():
+        if not iam.can_read_sensitivity(user.clearance, doc.classification):
+            continue
+        results.append(
+            {
+                "id": doc.id,
+                "kind": "document",
+                "label_ar": doc.title_ar,
+                "label_en": doc.title_en,
+                "detail": f"v{doc.version} · classification {doc.classification}",
+            }
+        )
+        if len(results) >= limit:
+            break
+    return results
+
+
 def record_full_read(document: Document) -> Document:
     """Count an authorized full read (atomic increment)."""
     Document.objects.filter(pk=document.pk).update(access_count=F("access_count") + 1)

@@ -2,6 +2,6 @@
 
 from __future__ import annotations
 
-from .services import org_tree, visible_personnel
+from .services import module_summary, org_tree, search, visible_personnel
 
-__all__ = ["org_tree", "visible_personnel"]
+__all__ = ["module_summary", "org_tree", "search", "visible_personnel"]

@@ -17,7 +17,7 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Any
 
-from django.db.models import Sum
+from django.db.models import Q, Sum
 
 from modules.iam.application import public as iam
 
@@ -101,3 +101,50 @@ def export_rows(user: Any) -> list[dict[str, Any]]:
     """Clearance-filtered export rows (only contracts the user is cleared for)."""
     visible = Contract.objects.filter(classification__lte=user.clearance).order_by("title_en")
     return [serialize_contract(contract) for contract in visible]
+
+
+def module_summary(user: Any) -> dict[str, Any]:
+    """Clearance-respecting headline counts for the finance module.
+
+    Budget/spent/remaining reuse :func:`budget_summary` (already clearance
+    filtered). Contract aggregates only count rows the user is cleared to see.
+    """
+    budget = budget_summary(user)
+    visible = Contract.objects.filter(classification__lte=user.clearance)
+    contracts_value = visible.aggregate(total=Sum("value"))["total"] or Decimal("0")
+
+    return {
+        "key": "finance",
+        "budget_total": budget["total_amount"],
+        "spent": budget["spent"],
+        "remaining": budget["remaining"],
+        "contracts": visible.count(),
+        "under_review": visible.filter(status=Contract.Status.UNDER_REVIEW).count(),
+        "contracts_value_visible": str(contracts_value),
+    }
+
+
+def search(user: Any, query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Case-insensitive contract search over human text, clearance-respecting.
+
+    Only contracts at or below the user's clearance are searched, so withheld
+    rows never surface. Capped at ``limit`` results; empty queries return [].
+    """
+    query = query.strip()
+    if not query:
+        return []
+
+    matches = Contract.objects.filter(classification__lte=user.clearance).filter(
+        Q(title_ar__icontains=query) | Q(title_en__icontains=query) | Q(vendor__icontains=query)
+    )[:limit]
+
+    return [
+        {
+            "id": contract.id,
+            "kind": "contract",
+            "label_ar": contract.title_ar,
+            "label_en": contract.title_en,
+            "detail": f"{contract.vendor} · {contract.get_status_display()}",
+        }
+        for contract in matches
+    ]

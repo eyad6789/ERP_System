@@ -3,6 +3,7 @@
 Runs every module's seed command so the demo comes up fully populated with
 realistic bilingual data across all modules.
 """
+
 from __future__ import annotations
 
 from typing import Any

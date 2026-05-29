@@ -23,4 +23,7 @@ class AuditEventSerializer(serializers.ModelSerializer):
             "target_id",
             "result",
             "ip",
+            "user_agent",
+            "request_id",
+            "metadata",
         ]

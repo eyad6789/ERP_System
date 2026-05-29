@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 
 from ..infrastructure.models import Site
 
@@ -30,3 +30,44 @@ def serialize_site(site: Site) -> dict[str, Any]:
         "info_en": site.info_en,
         "classification": site.classification,
     }
+
+
+def module_summary(user: Any) -> dict[str, Any]:
+    """Clearance-respecting counts of visible sites, broken down by site type."""
+    visible = visible_sites(user)
+    return {
+        "key": "gis",
+        "total": visible.count(),
+        "by_type": [
+            {
+                "type": site_type,
+                "count": visible.filter(site_type=site_type).count(),
+            }
+            for site_type in Site.SiteType.values
+        ],
+    }
+
+
+def search(user: Any, query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Case-insensitive search over site text fields, clearance-respecting."""
+    query = query.strip()
+    if not query:
+        return []
+    results: list[dict[str, Any]] = []
+    matches = visible_sites(user).filter(
+        Q(name_ar__icontains=query)
+        | Q(name_en__icontains=query)
+        | Q(info_ar__icontains=query)
+        | Q(info_en__icontains=query)
+    )[:limit]
+    for site in matches:
+        results.append(
+            {
+                "id": site.id,
+                "kind": "site",
+                "label_ar": site.name_ar,
+                "label_en": site.name_en,
+                "detail": site.get_site_type_display(),
+            }
+        )
+    return results

@@ -35,3 +35,45 @@ def org_tree(user: Any) -> list[dict[str, Any]]:
         }
         for d in departments
     ]
+
+
+def module_summary(user: Any) -> dict[str, Any]:
+    """Clearance-respecting counts of visible personnel.
+
+    Every count is drawn from the clearance-limited queryset, so a viewer is
+    never told about records above their clearance.
+    """
+    visible = visible_personnel(user)
+    return {
+        "key": "personnel",
+        "total": visible.count(),
+        "active": visible.filter(status=Person.Status.ACTIVE).count(),
+        "on_mission": visible.filter(status=Person.Status.MISSION).count(),
+        "by_clearance": [
+            {"level": level, "count": visible.filter(classification=level).count()}
+            for level in range(1, 5)
+        ],
+    }
+
+
+def search(user: Any, query: str, limit: int = 5) -> list[dict[str, Any]]:
+    """Case-insensitive search over personnel text fields, clearance-respecting."""
+    query = query.strip()
+    if not query:
+        return []
+    matches = visible_personnel(user).filter(
+        Q(name_ar__icontains=query)
+        | Q(name_en__icontains=query)
+        | Q(rank_ar__icontains=query)
+        | Q(rank_en__icontains=query)
+    )[:limit]
+    return [
+        {
+            "id": person.id,
+            "kind": "personnel",
+            "label_ar": person.name_ar,
+            "label_en": person.name_en,
+            "detail": person.get_status_display(),
+        }
+        for person in matches
+    ]

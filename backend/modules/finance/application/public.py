@@ -2,6 +2,20 @@
 
 from __future__ import annotations
 
-from .services import budget_summary, export_rows, list_contracts, serialize_contract
+from .services import (
+    budget_summary,
+    export_rows,
+    list_contracts,
+    module_summary,
+    search,
+    serialize_contract,
+)
 
-__all__ = ["budget_summary", "export_rows", "list_contracts", "serialize_contract"]
+__all__ = [
+    "budget_summary",
+    "export_rows",
+    "list_contracts",
+    "module_summary",
+    "search",
+    "serialize_contract",
+]

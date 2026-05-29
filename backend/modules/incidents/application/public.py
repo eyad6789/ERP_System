@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from .services import (
     is_valid_status,
+    module_summary,
+    search,
     serialize_incident,
     update_status,
     visible_incidents,
@@ -11,6 +13,8 @@ from .services import (
 
 __all__ = [
     "is_valid_status",
+    "module_summary",
+    "search",
     "serialize_incident",
     "update_status",
     "visible_incidents",

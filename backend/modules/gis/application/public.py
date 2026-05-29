@@ -2,6 +2,6 @@
 
 from __future__ import annotations
 
-from .services import serialize_site, visible_sites
+from .services import module_summary, search, serialize_site, visible_sites
 
-__all__ = ["serialize_site", "visible_sites"]
+__all__ = ["module_summary", "search", "serialize_site", "visible_sites"]
