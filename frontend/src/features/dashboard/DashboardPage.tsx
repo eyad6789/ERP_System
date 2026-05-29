@@ -1,8 +1,12 @@
-import BlockIcon from '@mui/icons-material/Block'
-import GroupIcon from '@mui/icons-material/Group'
-import HistoryIcon from '@mui/icons-material/History'
+import ArticleIcon from '@mui/icons-material/Article'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import InventoryIcon from '@mui/icons-material/Inventory2'
+import PlaceIcon from '@mui/icons-material/Place'
+import ReportProblemIcon from '@mui/icons-material/ReportProblem'
+import SavingsIcon from '@mui/icons-material/Savings'
 import SecurityIcon from '@mui/icons-material/Security'
-import VpnKeyIcon from '@mui/icons-material/VpnKey'
+import GroupIcon from '@mui/icons-material/Group'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import { Box, Chip, CircularProgress, Stack, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -20,7 +24,7 @@ import {
   YAxis,
 } from 'recharts'
 
-import { fetchDashboard } from '../../api/dashboard'
+import { fetchOverview, type OverviewAlert } from '../../api/dashboard'
 import { SectionCard } from '../../components/SectionCard'
 import { StatCard } from '../../components/StatCard'
 import { classification, tokens } from '../../theme/tokens'
@@ -32,11 +36,31 @@ const tooltipStyle = {
   color: tokens.text,
 } as const
 
+// Alert severity -> MUI chip color + accent token.
+const ALERT_COLOR: Record<OverviewAlert['severity'], 'error' | 'warning' | 'info'> = {
+  critical: 'error',
+  high: 'warning',
+  info: 'info',
+}
+const ALERT_ACCENT: Record<OverviewAlert['severity'], string> = {
+  critical: tokens.red,
+  high: tokens.orange,
+  info: tokens.cyan,
+}
+
+function pct(spent: string, total: string): string {
+  const s = Number(spent)
+  const t = Number(total)
+  if (!Number.isFinite(s) || !Number.isFinite(t) || t <= 0) return '0%'
+  return `${Math.round((s / t) * 100)}%`
+}
+
 export function DashboardPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const ar = i18n.language === 'ar'
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['dashboard'],
-    queryFn: fetchDashboard,
+    queryKey: ['dashboard-overview'],
+    queryFn: fetchOverview,
   })
 
   if (isLoading) {
@@ -49,6 +73,11 @@ export function DashboardPage() {
   if (isError || !data) {
     return <Typography color="error">{t('common.loading')}</Typography>
   }
+
+  const m = data.modules
+  const assetsOperational = m.assets
+    ? m.assets.by_condition.find((c) => c.condition === 'operational')?.count ?? 0
+    : 0
 
   const pieData = data.clearance_distribution.map((d) => ({
     name: t(`clearance.${d.level}`),
@@ -63,35 +92,103 @@ export function DashboardPage() {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h5">{t('nav.dashboard')}</Typography>
+      <Typography variant="h5">{t('dashboard.commandCenter')}</Typography>
 
+      {/* ALERTS strip */}
+      {data.alerts.length > 0 && (
+        <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
+          {data.alerts.map((alert, i) => (
+            <Box
+              key={i}
+              sx={{
+                flex: '1 1 280px',
+                minWidth: 260,
+                p: 1.5,
+                borderRadius: 2,
+                bgcolor: tokens.surface,
+                borderInlineStart: `3px solid ${ALERT_ACCENT[alert.severity]}`,
+                border: `1px solid ${tokens.border}`,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.25,
+              }}
+            >
+              <WarningAmberIcon sx={{ color: ALERT_ACCENT[alert.severity], fontSize: 22 }} />
+              <Typography variant="body2" sx={{ color: tokens.text, flex: 1 }}>
+                {ar ? alert.message_ar : alert.message_en}
+              </Typography>
+              <Chip
+                label={alert.count}
+                size="small"
+                color={ALERT_COLOR[alert.severity]}
+                variant="outlined"
+              />
+            </Box>
+          ))}
+        </Stack>
+      )}
+
+      {/* Cross-module KPI grid */}
       <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-        <StatCard
-          label={t('dashboard.totalUsers')}
-          value={data.kpis.total_users}
-          accent={tokens.cyan}
-          icon={<GroupIcon />}
-        />
-        <StatCard
-          label={t('dashboard.totalRoles')}
-          value={data.kpis.total_roles}
-          accent={tokens.gold}
-          icon={<VpnKeyIcon />}
-        />
-        <StatCard
-          label={t('dashboard.events7d')}
-          value={data.kpis.audit_events_7d}
-          accent={tokens.green}
-          icon={<HistoryIcon />}
-        />
-        <StatCard
-          label={t('dashboard.denied7d')}
-          value={data.kpis.denied_7d}
-          accent={tokens.red}
-          icon={<BlockIcon />}
-        />
+        {m.personnel && (
+          <StatCard
+            label={t('dashboard.headcount')}
+            value={m.personnel.total}
+            accent={tokens.cyan}
+            icon={<GroupIcon />}
+          />
+        )}
+        {m.documents && (
+          <StatCard
+            label={t('dashboard.classified')}
+            value={m.documents.total}
+            accent={tokens.gold}
+            icon={<ArticleIcon />}
+          />
+        )}
+        {m.finance && (
+          <StatCard
+            label={t('dashboard.budget')}
+            value={pct(m.finance.spent, m.finance.budget_total)}
+            accent={tokens.orange}
+            icon={<SavingsIcon />}
+          />
+        )}
+        {m.operations && (
+          <StatCard
+            label={t('dashboard.openTasks')}
+            value={m.operations.total}
+            accent={tokens.green}
+            icon={<AssignmentIcon />}
+          />
+        )}
+        {m.incidents && (
+          <StatCard
+            label={t('dashboard.openIncidents')}
+            value={m.incidents.open}
+            accent={tokens.red}
+            icon={<ReportProblemIcon />}
+          />
+        )}
+        {m.gis && (
+          <StatCard
+            label={t('dashboard.sites')}
+            value={m.gis.total}
+            accent={tokens.cyan}
+            icon={<PlaceIcon />}
+          />
+        )}
+        {m.assets && (
+          <StatCard
+            label={t('dashboard.assetsReady')}
+            value={assetsOperational}
+            accent={tokens.goldBright}
+            icon={<InventoryIcon />}
+          />
+        )}
       </Stack>
 
+      {/* Clearance pie + 7-day activity */}
       <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
         <SectionCard title={t('dashboard.clearanceDistribution')}>
           <ResponsiveContainer width="100%" height={260}>
@@ -144,6 +241,7 @@ export function DashboardPage() {
         </SectionCard>
       </Stack>
 
+      {/* Recent audit feed */}
       {data.recent_audit && (
         <SectionCard
           title={t('dashboard.recentAudit')}

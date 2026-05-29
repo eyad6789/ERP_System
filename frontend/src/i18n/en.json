@@ -56,7 +56,17 @@
     "auditActivity": "Audit activity (last 7 days)",
     "recentAudit": "Recent activity",
     "granted": "Granted",
-    "denied": "Denied"
+    "denied": "Denied",
+    "commandCenter": "Command Center",
+    "overview": "Overview",
+    "headcount": "Personnel",
+    "classified": "Classified docs",
+    "budget": "Budget utilized",
+    "openTasks": "Active tasks",
+    "openIncidents": "Open incidents",
+    "sites": "Mapped sites",
+    "assetsReady": "Assets operational",
+    "alertsTitle": "Operational alerts"
   },
   "clearance": {
     "1": "Public",
@@ -134,5 +144,53 @@
       "open": "Open",
       "closed": "Closed"
     }
+  },
+  "audit": {
+    "title": "Audit Log",
+    "subtitle": "Tamper-evident access & action ledger",
+    "search": "Search",
+    "action": "Action",
+    "result": "Result",
+    "actor": "Actor",
+    "targetType": "Target type",
+    "from": "From",
+    "to": "To",
+    "apply": "Apply",
+    "clear": "Clear",
+    "all": "All",
+    "granted": "Granted",
+    "denied": "Denied",
+    "time": "Time",
+    "target": "Target",
+    "page": "Page",
+    "of": "of",
+    "noResults": "No matching events",
+    "total": "Total events",
+    "topActions": "Top actions",
+    "topActors": "Top actors",
+    "activity": "Activity (14 days)"
+  },
+  "profile": {
+    "title": "My Profile",
+    "account": "Account",
+    "username": "Username",
+    "fullName": "Full name",
+    "department": "Department",
+    "role": "Role",
+    "clearance": "Clearance level",
+    "modules": "Authorized modules",
+    "language": "Language",
+    "signOut": "Sign out",
+    "security": "Security & session"
+  },
+  "alerts": {
+    "title": "Alerts",
+    "none": "No active alerts",
+    "viewAll": "View all"
+  },
+  "search": {
+    "placeholder": "Search across the system…",
+    "noResults": "No results",
+    "results": "Results"
   }
 }

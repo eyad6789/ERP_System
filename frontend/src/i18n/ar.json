@@ -56,7 +56,17 @@
     "auditActivity": "نشاط التدقيق (آخر 7 أيام)",
     "recentAudit": "النشاط الأخير",
     "granted": "مسموح",
-    "denied": "مرفوض"
+    "denied": "مرفوض",
+    "commandCenter": "مركز القيادة",
+    "overview": "نظرة عامة",
+    "headcount": "الأفراد",
+    "classified": "وثائق مصنّفة",
+    "budget": "الميزانية المستخدمة",
+    "openTasks": "مهام نشطة",
+    "openIncidents": "حوادث مفتوحة",
+    "sites": "مواقع على الخريطة",
+    "assetsReady": "أصول جاهزة",
+    "alertsTitle": "تنبيهات تشغيلية"
   },
   "clearance": {
     "1": "عام",
@@ -134,5 +144,53 @@
       "open": "مفتوح",
       "closed": "مغلق"
     }
+  },
+  "audit": {
+    "title": "سجل التدقيق",
+    "subtitle": "سجل وصول وإجراءات مقاوم للعبث",
+    "search": "بحث",
+    "action": "الإجراء",
+    "result": "النتيجة",
+    "actor": "المستخدم",
+    "targetType": "نوع الهدف",
+    "from": "من",
+    "to": "إلى",
+    "apply": "تطبيق",
+    "clear": "مسح",
+    "all": "الكل",
+    "granted": "مسموح",
+    "denied": "مرفوض",
+    "time": "الوقت",
+    "target": "الهدف",
+    "page": "صفحة",
+    "of": "من",
+    "noResults": "لا توجد أحداث مطابقة",
+    "total": "إجمالي الأحداث",
+    "topActions": "أكثر الإجراءات",
+    "topActors": "أكثر المستخدمين",
+    "activity": "النشاط (١٤ يوماً)"
+  },
+  "profile": {
+    "title": "ملفي الشخصي",
+    "account": "الحساب",
+    "username": "اسم المستخدم",
+    "fullName": "الاسم الكامل",
+    "department": "القسم",
+    "role": "الدور",
+    "clearance": "مستوى التصريح",
+    "modules": "الوحدات المصرّح بها",
+    "language": "اللغة",
+    "signOut": "تسجيل الخروج",
+    "security": "الأمان والجلسة"
+  },
+  "alerts": {
+    "title": "التنبيهات",
+    "none": "لا توجد تنبيهات نشطة",
+    "viewAll": "عرض الكل"
+  },
+  "search": {
+    "placeholder": "ابحث في النظام…",
+    "noResults": "لا نتائج",
+    "results": "النتائج"
   }
 }
