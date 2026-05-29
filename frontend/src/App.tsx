@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { RequireAuth } from './auth/RequireAuth'
 import { AppShell } from './components/AppShell'
+import { AdminPage } from './features/admin/AdminPage'
 import { AssetsPage } from './features/assets/AssetsPage'
 import { AuditPage } from './features/audit/AuditPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
@@ -13,6 +14,8 @@ import { LoginPage } from './features/login/LoginPage'
 import { OperationsPage } from './features/operations/OperationsPage'
 import { PersonnelPage } from './features/personnel/PersonnelPage'
 import { ProfilePage } from './features/profile/ProfilePage'
+import { SecurityPage } from './features/security/SecurityPage'
+import { SettingsPage } from './features/settings/SettingsPage'
 
 export default function App() {
   return (
@@ -35,6 +38,9 @@ export default function App() {
         <Route path="/incidents" element={<IncidentsPage />} />
         <Route path="/audit" element={<AuditPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/security" element={<SecurityPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>

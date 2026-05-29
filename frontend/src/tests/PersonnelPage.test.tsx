@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { Person } from '../api/personnel'
 import { PersonnelPage } from '../features/personnel/PersonnelPage'
@@ -21,25 +21,64 @@ const people: Person[] = [
   },
 ]
 
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
+function renderPage() {
+  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  render(
+    <QueryClientProvider client={qc}>
+      <PersonnelPage />
+    </QueryClientProvider>,
+  )
+}
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
+
 describe('PersonnelPage', () => {
   it('renders the clearance-filtered directory the API returned', async () => {
     await i18n.changeLanguage('en')
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify(people), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
-    )
-    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-    render(
-      <QueryClientProvider client={qc}>
-        <PersonnelPage />
-      </QueryClientProvider>,
-    )
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse(people))
+    renderPage()
 
     await waitFor(() => expect(screen.getByText('Huda')).toBeInTheDocument())
     expect(screen.getByText('Tariq')).toBeInTheDocument()
     // No level-3/4 names leaked into the rendered directory.
     expect(screen.queryByText(/Colonel|Lt\. Colonel/)).not.toBeInTheDocument()
+  })
+
+  it('creates a person via the dialog and refetches the list', async () => {
+    await i18n.changeLanguage('en')
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation((input, init) => {
+        const url = typeof input === 'string' ? input : input.toString()
+        const method = (init?.method ?? 'GET').toUpperCase()
+        if (method === 'POST' && url.includes('/personnel/')) {
+          return Promise.resolve(jsonResponse({ ...people[0], id: 3 }, 201))
+        }
+        return Promise.resolve(jsonResponse(people))
+      })
+
+    renderPage()
+    await waitFor(() => expect(screen.getByText('Huda')).toBeInTheDocument())
+
+    fireEvent.click(screen.getByTestId('personnel-new'))
+    fireEvent.change(screen.getByTestId('field-name_en'), { target: { value: 'Sara' } })
+    fireEvent.click(screen.getByTestId('submit-person'))
+
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.some(
+          ([, init]) => (init?.method ?? 'GET').toUpperCase() === 'POST',
+        ),
+      ).toBe(true),
+    )
   })
 })

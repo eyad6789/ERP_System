@@ -1,6 +1,21 @@
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import LanguageIcon from '@mui/icons-material/Language'
 import LogoutIcon from '@mui/icons-material/Logout'
-import { AppBar, Box, Button, Chip, Toolbar, Typography } from '@mui/material'
+import PersonIcon from '@mui/icons-material/Person'
+import SettingsIcon from '@mui/icons-material/Settings'
+import ShieldIcon from '@mui/icons-material/Shield'
+import {
+  AppBar,
+  Box,
+  Button,
+  Chip,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+} from '@mui/material'
+import { useState, type MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useNavigate } from 'react-router-dom'
 
@@ -8,6 +23,8 @@ import { logout } from '../api/auth'
 import { useAuth } from '../auth/AuthProvider'
 import { applyLang, type Lang } from '../i18n'
 import { tokens } from '../theme/tokens'
+import { AiAssistant } from './AiAssistant'
+import { CommandPalette } from './CommandPalette'
 import { GlobalSearch } from './GlobalSearch'
 import { NotificationsBell } from './NotificationsBell'
 import { Sidebar } from './Sidebar'
@@ -33,7 +50,15 @@ export function AppShell() {
   const { t, i18n } = useTranslation()
   const { me, refetch } = useAuth()
   const navigate = useNavigate()
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null)
+  const isSysadmin = me?.role?.code === 'sysadmin'
 
+  const openMenu = (e: MouseEvent<HTMLElement>) => setMenuAnchor(e.currentTarget)
+  const closeMenu = () => setMenuAnchor(null)
+  const go = (path: string) => {
+    closeMenu()
+    navigate(path)
+  }
   const toggleLang = () => applyLang((i18n.language === 'ar' ? 'en' : 'ar') as Lang)
   const onLogout = async () => {
     await logout()
@@ -58,7 +83,7 @@ export function AppShell() {
             <Chip
               label={i18n.language === 'ar' ? me.role.name_ar : me.role.name_en}
               size="small"
-              onClick={() => navigate('/profile')}
+              onClick={openMenu}
               sx={{
                 color: tokens.goldBright,
                 border: `1px solid ${tokens.borderGold}`,
@@ -74,6 +99,34 @@ export function AppShell() {
           <Button onClick={onLogout} color="inherit" size="small" startIcon={<LogoutIcon />}>
             {t('common.logout')}
           </Button>
+          <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={closeMenu}>
+            <MenuItem onClick={() => go('/profile')}>
+              <ListItemIcon>
+                <PersonIcon fontSize="small" />
+              </ListItemIcon>
+              {t('profile.title')}
+            </MenuItem>
+            <MenuItem onClick={() => go('/security')}>
+              <ListItemIcon>
+                <ShieldIcon fontSize="small" />
+              </ListItemIcon>
+              {t('security.title')}
+            </MenuItem>
+            <MenuItem onClick={() => go('/settings')}>
+              <ListItemIcon>
+                <SettingsIcon fontSize="small" />
+              </ListItemIcon>
+              {t('settings.title')}
+            </MenuItem>
+            {isSysadmin && (
+              <MenuItem onClick={() => go('/admin')}>
+                <ListItemIcon>
+                  <AdminPanelSettingsIcon fontSize="small" />
+                </ListItemIcon>
+                {t('admin.title')}
+              </MenuItem>
+            )}
+          </Menu>
         </Toolbar>
       </AppBar>
       <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
@@ -82,6 +135,8 @@ export function AppShell() {
           <Outlet />
         </Box>
       </Box>
+      <CommandPalette />
+      <AiAssistant />
     </Box>
   )
 }

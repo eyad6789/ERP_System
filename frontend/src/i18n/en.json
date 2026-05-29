@@ -24,7 +24,20 @@
     "logout": "Sign out",
     "language": "العربية",
     "locked": "Locked — insufficient clearance",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "new": "New",
+    "actions": "Actions",
+    "close": "Close",
+    "searchHere": "Search…",
+    "confirmDelete": "Delete this record? This action is audited.",
+    "saved": "Saved",
+    "required": "Required"
   },
   "documents": {
     "access": "Views",
@@ -192,5 +205,43 @@
     "placeholder": "Search across the system…",
     "noResults": "No results",
     "results": "Results"
+  },
+  "admin": {
+    "title": "Administration",
+    "users": "Users",
+    "roles": "Roles",
+    "addUser": "Add user",
+    "addRole": "Add role",
+    "code": "Code",
+    "modules": "Modules",
+    "active": "Active",
+    "deactivate": "Deactivate"
+  },
+  "security": {
+    "title": "Account Security",
+    "password": "Password",
+    "oldPassword": "Current password",
+    "newPassword": "New password",
+    "change": "Change password",
+    "mfa": "Two-factor (TOTP)",
+    "enable": "Enable",
+    "disable": "Disable",
+    "verify": "Verify",
+    "mfaHint": "Scan or enter this secret in your authenticator, then enter a 6-digit code.",
+    "code": "6-digit code",
+    "sessions": "Active sessions",
+    "revoke": "Revoke",
+    "current": "current"
+  },
+  "settings": {
+    "title": "Settings & Preferences",
+    "density": "Table density",
+    "comfortable": "Comfortable",
+    "compact": "Compact",
+    "numerals": "Arabic-Indic numerals",
+    "language": "Language"
+  },
+  "command": {
+    "placeholder": "Type a command or search… (Ctrl+K)"
   }
 }

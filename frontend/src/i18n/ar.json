@@ -24,7 +24,20 @@
     "logout": "تسجيل الخروج",
     "language": "English",
     "locked": "مقفل — تصريح غير كافٍ",
-    "loading": "جارٍ التحميل…"
+    "loading": "جارٍ التحميل…",
+    "create": "إنشاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "new": "جديد",
+    "actions": "إجراءات",
+    "close": "إغلاق",
+    "searchHere": "بحث…",
+    "confirmDelete": "حذف هذا السجل؟ يتم تدقيق هذا الإجراء.",
+    "saved": "تم الحفظ",
+    "required": "مطلوب"
   },
   "documents": {
     "access": "مرات الاطلاع",
@@ -192,5 +205,43 @@
     "placeholder": "ابحث في النظام…",
     "noResults": "لا نتائج",
     "results": "النتائج"
+  },
+  "admin": {
+    "title": "الإدارة",
+    "users": "المستخدمون",
+    "roles": "الأدوار",
+    "addUser": "إضافة مستخدم",
+    "addRole": "إضافة دور",
+    "code": "الرمز",
+    "modules": "الوحدات",
+    "active": "نشط",
+    "deactivate": "تعطيل"
+  },
+  "security": {
+    "title": "أمان الحساب",
+    "password": "كلمة المرور",
+    "oldPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "change": "تغيير كلمة المرور",
+    "mfa": "المصادقة الثنائية (TOTP)",
+    "enable": "تفعيل",
+    "disable": "تعطيل",
+    "verify": "تحقّق",
+    "mfaHint": "امسح أو أدخل هذا السر في تطبيق المصادقة ثم أدخل رمزاً من ٦ أرقام.",
+    "code": "رمز من ٦ أرقام",
+    "sessions": "الجلسات النشطة",
+    "revoke": "إنهاء",
+    "current": "الحالية"
+  },
+  "settings": {
+    "title": "الإعدادات والتفضيلات",
+    "density": "كثافة الجداول",
+    "comfortable": "مريحة",
+    "compact": "مدمجة",
+    "numerals": "الأرقام العربية الهندية",
+    "language": "اللغة"
+  },
+  "command": {
+    "placeholder": "اكتب أمراً أو ابحث… (Ctrl+K)"
   }
 }
