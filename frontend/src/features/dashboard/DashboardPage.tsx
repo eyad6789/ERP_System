@@ -1,12 +1,9 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  Stack,
-  Typography,
-} from '@mui/material'
+import BlockIcon from '@mui/icons-material/Block'
+import GroupIcon from '@mui/icons-material/Group'
+import HistoryIcon from '@mui/icons-material/History'
+import SecurityIcon from '@mui/icons-material/Security'
+import VpnKeyIcon from '@mui/icons-material/VpnKey'
+import { Box, Chip, CircularProgress, Stack, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -24,35 +21,16 @@ import {
 } from 'recharts'
 
 import { fetchDashboard } from '../../api/dashboard'
+import { SectionCard } from '../../components/SectionCard'
+import { StatCard } from '../../components/StatCard'
 import { classification, tokens } from '../../theme/tokens'
 
-function Kpi({ label, value, accent }: { label: string; value: number; accent?: string }) {
-  return (
-    <Card sx={{ minWidth: 180, flex: 1 }}>
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {label}
-        </Typography>
-        <Typography variant="h4" sx={{ color: accent ?? tokens.text, fontWeight: 700 }}>
-          {value}
-        </Typography>
-      </CardContent>
-    </Card>
-  )
-}
-
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <Card sx={{ flex: 1, minWidth: 320 }}>
-      <CardContent>
-        <Typography variant="subtitle1" sx={{ mb: 2 }}>
-          {title}
-        </Typography>
-        {children}
-      </CardContent>
-    </Card>
-  )
-}
+const tooltipStyle = {
+  background: tokens.surface2,
+  border: `1px solid ${tokens.border}`,
+  borderRadius: 8,
+  color: tokens.text,
+} as const
 
 export function DashboardPage() {
   const { t } = useTranslation()
@@ -88,57 +66,110 @@ export function DashboardPage() {
       <Typography variant="h5">{t('nav.dashboard')}</Typography>
 
       <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-        <Kpi label={t('dashboard.totalUsers')} value={data.kpis.total_users} accent={tokens.cyan} />
-        <Kpi label={t('dashboard.totalRoles')} value={data.kpis.total_roles} accent={tokens.gold} />
-        <Kpi label={t('dashboard.events7d')} value={data.kpis.audit_events_7d} accent={tokens.green} />
-        <Kpi label={t('dashboard.denied7d')} value={data.kpis.denied_7d} accent={tokens.red} />
+        <StatCard
+          label={t('dashboard.totalUsers')}
+          value={data.kpis.total_users}
+          accent={tokens.cyan}
+          icon={<GroupIcon />}
+        />
+        <StatCard
+          label={t('dashboard.totalRoles')}
+          value={data.kpis.total_roles}
+          accent={tokens.gold}
+          icon={<VpnKeyIcon />}
+        />
+        <StatCard
+          label={t('dashboard.events7d')}
+          value={data.kpis.audit_events_7d}
+          accent={tokens.green}
+          icon={<HistoryIcon />}
+        />
+        <StatCard
+          label={t('dashboard.denied7d')}
+          value={data.kpis.denied_7d}
+          accent={tokens.red}
+          icon={<BlockIcon />}
+        />
       </Stack>
 
       <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-        <Panel title={t('dashboard.clearanceDistribution')}>
+        <SectionCard title={t('dashboard.clearanceDistribution')}>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={90} label>
                 {pieData.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} />
+                  <Cell key={i} fill={entry.color} stroke={tokens.surface} />
                 ))}
               </Pie>
               <Legend />
-              <Tooltip />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(201,162,39,0.06)' }} />
             </PieChart>
           </ResponsiveContainer>
-        </Panel>
+        </SectionCard>
 
-        <Panel title={t('dashboard.auditActivity')}>
+        <SectionCard title={t('dashboard.auditActivity')}>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={activityData}>
+              <defs>
+                <linearGradient id="dashGranted" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={tokens.green} stopOpacity={0.95} />
+                  <stop offset="100%" stopColor={tokens.green} stopOpacity={0.55} />
+                </linearGradient>
+                <linearGradient id="dashDenied" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={tokens.red} stopOpacity={0.95} />
+                  <stop offset="100%" stopColor={tokens.red} stopOpacity={0.55} />
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={tokens.border} />
-              <XAxis dataKey="day" stroke={tokens.muted} fontSize={12} />
-              <YAxis stroke={tokens.muted} fontSize={12} allowDecimals={false} />
-              <Tooltip />
+              <XAxis dataKey="day" stroke={tokens.muted} fontSize={12} tickLine={false} />
+              <YAxis stroke={tokens.muted} fontSize={12} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(201,162,39,0.06)' }} />
               <Legend />
-              <Bar dataKey="granted" stackId="a" fill={tokens.green} name={t('dashboard.granted')} />
-              <Bar dataKey="denied" stackId="a" fill={tokens.red} name={t('dashboard.denied')} />
+              <Bar
+                dataKey="granted"
+                stackId="a"
+                fill="url(#dashGranted)"
+                name={t('dashboard.granted')}
+                radius={[0, 0, 0, 0]}
+              />
+              <Bar
+                dataKey="denied"
+                stackId="a"
+                fill="url(#dashDenied)"
+                name={t('dashboard.denied')}
+                radius={[6, 6, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
-        </Panel>
+        </SectionCard>
       </Stack>
 
       {data.recent_audit && (
-        <Panel title={t('dashboard.recentAudit')}>
-          <Stack spacing={1}>
+        <SectionCard
+          title={t('dashboard.recentAudit')}
+          action={<SecurityIcon sx={{ color: tokens.gold, fontSize: 18, opacity: 0.7 }} />}
+        >
+          <Stack spacing={0.5}>
             {data.recent_audit.map((row, i) => (
               <Stack
                 key={i}
                 direction="row"
                 spacing={2}
                 alignItems="center"
-                sx={{ fontSize: 13, color: tokens.muted }}
+                sx={{
+                  fontSize: 13,
+                  color: tokens.muted,
+                  px: 1,
+                  py: 1,
+                  borderRadius: 1,
+                  transition: 'background 0.15s',
+                  '&:hover': { background: tokens.surface2 },
+                }}
               >
                 <Box component="span" sx={{ width: 64, fontFamily: 'monospace' }}>
                   {row.ts.slice(11, 19)}
                 </Box>
-                <Box component="span" sx={{ width: 90, color: tokens.text }}>
+                <Box component="span" sx={{ width: 90, color: tokens.text, fontWeight: 600 }}>
                   {row.actor_label}
                 </Box>
                 <Box component="span" sx={{ flex: 1 }}>
@@ -153,7 +184,7 @@ export function DashboardPage() {
               </Stack>
             ))}
           </Stack>
-        </Panel>
+        </SectionCard>
       )}
     </Stack>
   )

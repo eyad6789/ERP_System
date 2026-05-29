@@ -1,3 +1,5 @@
+import LanguageIcon from '@mui/icons-material/Language'
+import LogoutIcon from '@mui/icons-material/Logout'
 import { AppBar, Box, Button, Chip, Toolbar, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { Outlet } from 'react-router-dom'
@@ -5,8 +7,25 @@ import { Outlet } from 'react-router-dom'
 import { logout } from '../api/auth'
 import { useAuth } from '../auth/AuthProvider'
 import { applyLang, type Lang } from '../i18n'
-import { ClassificationBanner } from './ClassificationBanner'
+import { tokens } from '../theme/tokens'
 import { Sidebar } from './Sidebar'
+
+// Small gold rhombus crest.
+function Crest() {
+  return (
+    <Box
+      sx={{
+        width: 26,
+        height: 26,
+        transform: 'rotate(45deg)',
+        background: `linear-gradient(135deg, ${tokens.goldBright}, ${tokens.goldDim})`,
+        border: `1px solid ${tokens.goldBright}`,
+        borderRadius: '6px',
+        boxShadow: '0 0 16px -2px rgba(201,162,39,0.6)',
+      }}
+    />
+  )
+}
 
 export function AppShell() {
   const { t, i18n } = useTranslation()
@@ -20,23 +39,30 @@ export function AppShell() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <ClassificationBanner />
       <AppBar position="static" color="default" elevation={0}>
-        <Toolbar sx={{ gap: 1 }}>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <Toolbar sx={{ gap: 1.5 }}>
+          <Crest />
+          <Typography
+            variant="h6"
+            sx={{ flexGrow: 1, color: tokens.text, fontWeight: 600, letterSpacing: '0.02em' }}
+          >
             {t('appName')}
           </Typography>
           {me?.role && (
             <Chip
               label={i18n.language === 'ar' ? me.role.name_ar : me.role.name_en}
-              color="secondary"
               size="small"
+              sx={{
+                color: tokens.goldBright,
+                border: `1px solid ${tokens.borderGold}`,
+                bgcolor: 'rgba(201,162,39,0.08)',
+              }}
             />
           )}
-          <Button onClick={toggleLang} color="inherit" size="small">
+          <Button onClick={toggleLang} color="inherit" size="small" startIcon={<LanguageIcon />}>
             {t('common.language')}
           </Button>
-          <Button onClick={onLogout} color="inherit" size="small">
+          <Button onClick={onLogout} color="inherit" size="small" startIcon={<LogoutIcon />}>
             {t('common.logout')}
           </Button>
         </Toolbar>
@@ -47,7 +73,6 @@ export function AppShell() {
           <Outlet />
         </Box>
       </Box>
-      <ClassificationBanner />
     </Box>
   )
 }

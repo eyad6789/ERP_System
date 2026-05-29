@@ -1,3 +1,8 @@
+import BadgeIcon from '@mui/icons-material/Badge'
+import CloseIcon from '@mui/icons-material/Close'
+import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff'
+import GroupsIcon from '@mui/icons-material/Groups'
+import HowToRegIcon from '@mui/icons-material/HowToReg'
 import {
   Box,
   Chip,
@@ -5,7 +10,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Paper,
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -20,6 +25,9 @@ import { useTranslation } from 'react-i18next'
 
 import { fetchPerson, fetchPersonnel, type Person } from '../../api/personnel'
 import { ClassificationBadge } from '../../components/ClassificationBadge'
+import { SectionCard } from '../../components/SectionCard'
+import { StatCard } from '../../components/StatCard'
+import { tokens } from '../../theme/tokens'
 
 const STATUS_COLOR: Record<string, 'success' | 'warning' | 'info'> = {
   active: 'success',
@@ -35,25 +43,49 @@ function ProfileDialog({ id, onClose }: { id: number; onClose: () => void }) {
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t('personnel.profile')}</DialogTitle>
+      <DialogTitle
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+      >
+        {t('personnel.profile')}
+        <IconButton size="small" onClick={onClose} aria-label="close" sx={{ color: tokens.muted }}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         {isLoading || !data ? (
-          <CircularProgress />
+          <Box sx={{ display: 'grid', placeItems: 'center', py: 4 }}>
+            <CircularProgress />
+          </Box>
         ) : (
-          <Stack spacing={1.5} sx={{ pt: 1 }}>
-            <Typography variant="h6">{ar ? data.name_ar : data.name_en}</Typography>
-            <Row label={t('personnel.rank')} value={ar ? data.rank_ar : data.rank_en} />
-            <Row
-              label={t('personnel.department')}
-              value={ar ? data.department_name_ar : data.department_name_en}
-            />
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography color="text.secondary">{t('personnel.clearance')}:</Typography>
+          <Stack spacing={2} sx={{ pt: 1 }}>
+            <Stack direction="row" alignItems="center" spacing={1.5} flexWrap="wrap">
+              <Typography variant="h6" sx={{ color: tokens.text }}>
+                {ar ? data.name_ar : data.name_en}
+              </Typography>
               <ClassificationBadge level={data.classification} />
             </Stack>
-            <Row label={t('personnel.attendance')} value={`${data.attendance ?? '-'}%`} />
-            <Row label={t('personnel.joined')} value={String(data.joined_year ?? '-')} />
-            <Row label={t('personnel.contract')} value={data.contract_type ?? '-'} />
+            <Stack direction="row" spacing={2} flexWrap="wrap">
+              <StatCard
+                label={t('personnel.attendance')}
+                value={`${data.attendance ?? '-'}%`}
+                accent={tokens.green}
+                icon={<HowToRegIcon fontSize="small" />}
+              />
+              <StatCard
+                label={t('personnel.joined')}
+                value={String(data.joined_year ?? '-')}
+                accent={tokens.gold}
+                icon={<BadgeIcon fontSize="small" />}
+              />
+            </Stack>
+            <Stack spacing={1.25}>
+              <Row label={t('personnel.rank')} value={ar ? data.rank_ar : data.rank_en} />
+              <Row
+                label={t('personnel.department')}
+                value={ar ? data.department_name_ar : data.department_name_en}
+              />
+              <Row label={t('personnel.contract')} value={data.contract_type ?? '-'} />
+            </Stack>
           </Stack>
         )}
       </DialogContent>
@@ -63,9 +95,13 @@ function ProfileDialog({ id, onClose }: { id: number; onClose: () => void }) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <Stack direction="row" justifyContent="space-between">
-      <Typography color="text.secondary">{label}</Typography>
-      <Typography>{value}</Typography>
+    <Stack
+      direction="row"
+      justifyContent="space-between"
+      sx={{ py: 0.75, borderBottom: `1px solid ${tokens.border}` }}
+    >
+      <Typography sx={{ color: tokens.muted }}>{label}</Typography>
+      <Typography sx={{ color: tokens.text }}>{value}</Typography>
     </Stack>
   )
 }
@@ -85,14 +121,45 @@ export function PersonnelPage() {
   }
 
   const people: Person[] = data ?? []
+  const activeCount = people.filter((p) => p.status === 'active').length
+  const leaveCount = people.filter((p) => p.status === 'leave').length
+  const missionCount = people.filter((p) => p.status === 'mission').length
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={3}>
       <Stack direction="row" alignItems="center" spacing={2}>
         <Typography variant="h5">{t('nav.personnel')}</Typography>
         <Chip label={`${people.length}`} size="small" />
       </Stack>
-      <Paper>
+
+      <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+        <StatCard
+          label={t('personnel.status')}
+          value={people.length}
+          accent={tokens.gold}
+          icon={<GroupsIcon fontSize="small" />}
+        />
+        <StatCard
+          label={t('personnel.statusValue.active')}
+          value={activeCount}
+          accent={tokens.green}
+          icon={<HowToRegIcon fontSize="small" />}
+        />
+        <StatCard
+          label={t('personnel.statusValue.leave')}
+          value={leaveCount}
+          accent={tokens.orange}
+          icon={<BadgeIcon fontSize="small" />}
+        />
+        <StatCard
+          label={t('personnel.statusValue.mission')}
+          value={missionCount}
+          accent={tokens.cyan}
+          icon={<FlightTakeoffIcon fontSize="small" />}
+        />
+      </Stack>
+
+      <SectionCard title={t('nav.personnel')}>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -111,7 +178,7 @@ export function PersonnelPage() {
                 sx={{ cursor: 'pointer' }}
                 onClick={() => setSelected(p.id)}
               >
-                <TableCell>{ar ? p.name_ar : p.name_en}</TableCell>
+                <TableCell sx={{ color: tokens.text }}>{ar ? p.name_ar : p.name_en}</TableCell>
                 <TableCell>{ar ? p.rank_ar : p.rank_en}</TableCell>
                 <TableCell>{ar ? p.department_name_ar : p.department_name_en}</TableCell>
                 <TableCell>
@@ -129,7 +196,7 @@ export function PersonnelPage() {
             ))}
           </TableBody>
         </Table>
-      </Paper>
+      </SectionCard>
       {selected !== null && <ProfileDialog id={selected} onClose={() => setSelected(null)} />}
     </Stack>
   )

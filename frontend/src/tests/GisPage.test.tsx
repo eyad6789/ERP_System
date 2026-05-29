@@ -22,12 +22,18 @@ const sites: Site[] = [
 describe('GisPage', () => {
   it('renders projected markers and a popup with detail on click', async () => {
     await i18n.changeLanguage('en')
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify(sites), {
+    const json = (body: unknown) =>
+      new Response(JSON.stringify(body), {
         status: 200,
         headers: { 'content-type': 'application/json' },
-      }),
-    )
+      })
+    // Route by URL: the list returns the array; the detail endpoint returns one site.
+    vi.spyOn(globalThis, 'fetch').mockImplementation((input) => {
+      const url = String(input)
+      const m = url.match(/\/gis\/sites\/(\d+)$/)
+      if (m) return Promise.resolve(json(sites.find((s) => s.id === Number(m[1]))))
+      return Promise.resolve(json(sites))
+    })
     const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
     render(
       <QueryClientProvider client={qc}>
@@ -35,9 +41,10 @@ describe('GisPage', () => {
       </QueryClientProvider>,
     )
 
-    await waitFor(() => expect(screen.getAllByTestId('gis-marker')).toHaveLength(2))
-    fireEvent.click(screen.getAllByTestId('gis-marker')[0]!)
+    await waitFor(() => expect(screen.getAllByTestId('iraq-marker')).toHaveLength(2))
+    fireEvent.click(screen.getAllByTestId('iraq-marker')[0]!)
     await waitFor(() => expect(screen.getByTestId('gis-popup')).toBeInTheDocument())
-    expect(screen.getByText('Baghdad Center')).toBeInTheDocument()
+    // The popup shows the audited detail fetched for the selected site (async).
+    expect(await screen.findByText('Command center')).toBeInTheDocument()
   })
 })

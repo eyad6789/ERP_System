@@ -1,10 +1,13 @@
+import CloseIcon from '@mui/icons-material/Close'
+import PlaceIcon from '@mui/icons-material/Place'
 import {
   Box,
   Checkbox,
+  Chip,
   CircularProgress,
   FormControlLabel,
   FormGroup,
-  Paper,
+  IconButton,
   Stack,
   Typography,
 } from '@mui/material'
@@ -12,64 +15,63 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { fetchSite, fetchSites, type Site, type SiteType } from '../../api/gis'
+import { fetchSite, fetchSites, type SiteType } from '../../api/gis'
 import { ClassificationBadge } from '../../components/ClassificationBadge'
-import { classification, tokens } from '../../theme/tokens'
+import { IraqMap } from '../../components/IraqMap'
+import { SectionCard } from '../../components/SectionCard'
+import { tokens } from '../../theme/tokens'
 
-// Iraq bounding box used to project lat/lng into the offline map container.
-// MapLibre GL is the production path; the demo uses projected markers (offline).
-const BBOX = { latMin: 29, latMax: 37.5, lngMin: 38.5, lngMax: 48.8 }
 const SITE_TYPES: SiteType[] = ['facility', 'unit', 'asset']
 
-function project(site: Site): { left: string; top: string } {
-  const x = (site.lng - BBOX.lngMin) / (BBOX.lngMax - BBOX.lngMin)
-  const y = (BBOX.latMax - site.lat) / (BBOX.latMax - BBOX.latMin)
-  const clamp = (v: number) => Math.min(1, Math.max(0, v))
-  return { left: `${clamp(x) * 100}%`, top: `${clamp(y) * 100}%` }
-}
-
-function markerColor(level: number): string {
-  return classification[level as 1 | 2 | 3 | 4]?.color ?? tokens.muted
-}
-
-function SitePopup({ site }: { site: Site }) {
+function SitePopup({ id, onClose }: { id: number; onClose: () => void }) {
   const { t, i18n } = useTranslation()
   const ar = i18n.language === 'ar'
   // Selecting a marker hits the IDOR-safe detail endpoint, which audits the read.
-  const { data } = useQuery({ queryKey: ['site', site.id], queryFn: () => fetchSite(site.id) })
-  const detail = data ?? site
+  const { data } = useQuery({ queryKey: ['site', id], queryFn: () => fetchSite(id) })
 
   return (
-    <Paper
+    <Box
       data-testid="gis-popup"
-      elevation={6}
       sx={{
         position: 'absolute',
-        left: project(site).left,
-        top: project(site).top,
-        transform: 'translate(12px, -50%)',
-        p: 1.5,
-        maxWidth: 220,
-        zIndex: 5,
+        insetInlineEnd: 16,
+        top: 16,
+        width: 250,
+        p: 2,
+        borderRadius: 2,
+        bgcolor: tokens.surface2,
+        border: `1px solid ${tokens.borderGold}`,
+        boxShadow: '0 18px 40px -20px rgba(0,0,0,0.9)',
+        backdropFilter: 'blur(4px)',
       }}
     >
-      <Stack spacing={0.5}>
-        <Typography variant="subtitle2">{ar ? detail.name_ar : detail.name_en}</Typography>
-        <ClassificationBadge level={detail.classification} />
-        <Typography variant="caption" color="text.secondary">
-          {ar ? detail.info_ar : detail.info_en}
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography variant="subtitle1">
+          {data ? (ar ? data.name_ar : data.name_en) : t('common.loading')}
         </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {t(`gis.type.${detail.site_type}`)}
-        </Typography>
+        <IconButton size="small" onClick={onClose} aria-label="close">
+          <CloseIcon fontSize="small" />
+        </IconButton>
       </Stack>
-    </Paper>
+      {data && (
+        <Stack spacing={1} sx={{ mt: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            {ar ? data.info_ar : data.info_en}
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Chip size="small" label={t(`gis.type.${data.site_type}`)} />
+            <ClassificationBadge level={data.classification} />
+          </Stack>
+        </Stack>
+      )}
+    </Box>
   )
 }
 
 export function GisPage() {
-  const { t } = useTranslation()
-  const [selected, setSelected] = useState<Site | null>(null)
+  const { t, i18n } = useTranslation()
+  const ar = i18n.language === 'ar'
+  const [selected, setSelected] = useState<number | null>(null)
   const [active, setActive] = useState<Record<SiteType, boolean>>({
     facility: true,
     unit: true,
@@ -77,8 +79,7 @@ export function GisPage() {
   })
   const { data, isLoading } = useQuery({ queryKey: ['sites'], queryFn: fetchSites })
 
-  const sites = useMemo(() => data ?? [], [data])
-  const visible = useMemo(() => sites.filter((s) => active[s.site_type]), [sites, active])
+  const sites = useMemo(() => (data ?? []).filter((s) => active[s.site_type]), [data, active])
 
   if (isLoading) {
     return (
@@ -90,67 +91,52 @@ export function GisPage() {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="h5">{t('nav.gis')}</Typography>
-      <FormGroup row data-testid="gis-layers">
-        {SITE_TYPES.map((type) => (
-          <FormControlLabel
-            key={type}
-            control={
-              <Checkbox
-                checked={active[type]}
-                onChange={(e) => setActive((p) => ({ ...p, [type]: e.target.checked }))}
-                inputProps={{ 'aria-label': t(`gis.type.${type}`) }}
-              />
-            }
-            label={t(`gis.type.${type}`)}
-          />
-        ))}
-      </FormGroup>
-      <Box
-        data-testid="gis-map"
-        sx={{
-          position: 'relative',
-          width: '100%',
-          height: 520,
-          borderRadius: 2,
-          border: `1px solid ${tokens.border}`,
-          backgroundColor: tokens.bg,
-          backgroundImage: `linear-gradient(${tokens.border} 1px, transparent 1px), linear-gradient(90deg, ${tokens.border} 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-          overflow: 'hidden',
-        }}
-        onClick={() => setSelected(null)}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        flexWrap="wrap"
+        gap={1}
       >
-        {visible.map((site) => {
-          const pos = project(site)
-          return (
-            <Box
-              key={site.id}
-              data-testid="gis-marker"
-              role="button"
-              aria-label={site.name_en}
-              onClick={(e) => {
-                e.stopPropagation()
-                setSelected(site)
-              }}
-              sx={{
-                position: 'absolute',
-                left: pos.left,
-                top: pos.top,
-                transform: 'translate(-50%, -50%)',
-                width: 16,
-                height: 16,
-                borderRadius: '50%',
-                cursor: 'pointer',
-                backgroundColor: markerColor(site.classification),
-                border: `2px solid ${tokens.text}`,
-                boxShadow: `0 0 8px ${markerColor(site.classification)}`,
-              }}
+        <Typography variant="h5">{t('nav.gis')}</Typography>
+        <FormGroup row>
+          {SITE_TYPES.map((tp) => (
+            <FormControlLabel
+              key={tp}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={active[tp]}
+                  onChange={(e) => setActive((a) => ({ ...a, [tp]: e.target.checked }))}
+                />
+              }
+              label={t(`gis.type.${tp}`)}
             />
-          )
-        })}
-        {selected && <SitePopup site={selected} />}
-      </Box>
+          ))}
+        </FormGroup>
+      </Stack>
+
+      <SectionCard title={t('nav.gis')}>
+        <Box sx={{ position: 'relative' }}>
+          <IraqMap sites={sites} ar={ar} onSelect={setSelected} />
+          {selected !== null && <SitePopup id={selected} onClose={() => setSelected(null)} />}
+        </Box>
+        <Stack direction="row" spacing={2} sx={{ mt: 1, flexWrap: 'wrap' }}>
+          {sites.map((s) => (
+            <Stack
+              key={s.id}
+              direction="row"
+              spacing={0.5}
+              alignItems="center"
+              sx={{ cursor: 'pointer', color: tokens.muted }}
+              onClick={() => setSelected(s.id)}
+            >
+              <PlaceIcon sx={{ fontSize: 16 }} />
+              <Typography variant="caption">{ar ? s.name_ar : s.name_en}</Typography>
+            </Stack>
+          ))}
+        </Stack>
+      </SectionCard>
     </Stack>
   )
 }
