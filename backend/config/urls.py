@@ -16,4 +16,5 @@ urlpatterns = [
     path("api/operations/", include("modules.operations.interfaces.urls")),
     path("api/assets/", include("modules.assets.interfaces.urls")),
     path("api/incidents/", include("modules.incidents.interfaces.urls")),
+    path("api/ai/", include("modules.ai.interfaces.urls")),
 ]
