@@ -25,16 +25,22 @@ export function StatCard({ label, value, accent = tokens.gold, icon }: StatCardP
           background: `linear-gradient(90deg, ${accent}, transparent 85%)`,
         }}
       />
-      {/* oversized accent watermark icon */}
+      {/* small accent icon chip in the corner */}
       {icon && (
         <Box
           sx={{
             position: 'absolute',
-            insetInlineEnd: -6,
-            top: -2,
+            insetInlineEnd: 12,
+            top: 12,
+            width: 34,
+            height: 34,
+            borderRadius: '50%',
+            display: 'grid',
+            placeItems: 'center',
             color: accent,
-            opacity: 0.12,
-            '& svg': { fontSize: 92 },
+            bgcolor: 'rgba(255,255,255,0.04)',
+            border: `1px solid ${accent}33`,
+            '& svg': { fontSize: 19 },
           }}
         >
           {icon}

@@ -1,6 +1,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
+// MapLibre GL needs WebGL (absent in jsdom); mock the map to plain DOM so the
+// page's controls/markers can still be exercised in tests.
+vi.mock('react-map-gl/maplibre', () => ({
+  default: ({ children }: { children?: ReactNode }) => <div data-testid="live-map">{children}</div>,
+  Marker: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
+    <div onClick={onClick}>{children}</div>
+  ),
+  NavigationControl: () => null,
+  ScaleControl: () => null,
+}))
 
 import type { Site } from '../api/gis'
 import { GisPage } from '../features/gis/GisPage'

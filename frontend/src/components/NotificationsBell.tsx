@@ -12,9 +12,22 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 import { fetchAlerts, type AlertSeverity } from '../api/alerts'
 import { tokens } from '../theme/tokens'
+
+// Alert module -> in-app route, so a notification is actionable.
+const MODULE_ROUTE: Record<string, string> = {
+  incidents: '/incidents',
+  assets: '/assets',
+  finance: '/finance',
+  audit: '/audit',
+  operations: '/operations',
+  personnel: '/personnel',
+  documents: '/documents',
+  gis: '/gis',
+}
 
 // Severity -> dot color, escalating warm gold toward alarm red.
 const SEVERITY_COLOR: Record<AlertSeverity, string> = {
@@ -26,6 +39,7 @@ const SEVERITY_COLOR: Record<AlertSeverity, string> = {
 export function NotificationsBell() {
   const { t, i18n } = useTranslation()
   const ar = i18n.language === 'ar'
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const open = Boolean(anchorEl)
 
@@ -96,7 +110,11 @@ export function NotificationsBell() {
           alerts.map((alert, idx) => (
             <MenuItem
               key={`${alert.module}-${idx}`}
-              onClick={() => setAnchorEl(null)}
+              onClick={() => {
+                setAnchorEl(null)
+                const route = MODULE_ROUTE[alert.module]
+                if (route) navigate(route)
+              }}
               sx={{ alignItems: 'flex-start', py: 1.25, whiteSpace: 'normal' }}
             >
               <Stack direction="row" spacing={1.25} alignItems="flex-start" sx={{ width: '100%' }}>

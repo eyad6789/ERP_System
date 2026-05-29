@@ -79,11 +79,13 @@ export function DashboardPage() {
     ? m.assets.by_condition.find((c) => c.condition === 'operational')?.count ?? 0
     : 0
 
-  const pieData = data.clearance_distribution.map((d) => ({
-    name: t(`clearance.${d.level}`),
-    value: d.count,
-    color: classification[d.level as 1 | 2 | 3 | 4]?.color ?? tokens.cyan,
-  }))
+  const pieData = data.clearance_distribution
+    .filter((d) => d.count > 0) // don't render empty (0-count) slices
+    .map((d) => ({
+      name: t(`clearance.${d.level}`),
+      value: d.count,
+      color: classification[d.level as 1 | 2 | 3 | 4]?.color ?? tokens.cyan,
+    }))
   const activityData = data.audit_activity.map((a) => ({
     day: a.date.slice(5), // MM-DD
     granted: a.granted,
@@ -193,9 +195,17 @@ export function DashboardPage() {
         <SectionCard title={t('dashboard.clearanceDistribution')}>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
-              <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={90} label>
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={48}
+                outerRadius={86}
+                paddingAngle={2}
+                label={(e: { value: number }) => `${e.value}`}
+              >
                 {pieData.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} stroke={tokens.surface} />
+                  <Cell key={i} fill={entry.color} stroke={tokens.surface} strokeWidth={2} />
                 ))}
               </Pie>
               <Legend />

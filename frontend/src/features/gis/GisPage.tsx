@@ -44,7 +44,7 @@ import {
   updateSite,
 } from '../../api/gis'
 import { ClassificationBadge } from '../../components/ClassificationBadge'
-import { IraqMap } from '../../components/IraqMap'
+import { LiveMap } from '../../components/LiveMap'
 import { SectionCard } from '../../components/SectionCard'
 import { tokens } from '../../theme/tokens'
 
@@ -393,7 +393,7 @@ export function GisPage() {
               <CircularProgress />
             </Box>
           ) : (
-            <IraqMap sites={sites} ar={ar} onSelect={setSelected} />
+            <LiveMap sites={sites} ar={ar} onSelect={setSelected} />
           )}
           {selected !== null && <SitePopup id={selected} onClose={() => setSelected(null)} />}
         </Box>
