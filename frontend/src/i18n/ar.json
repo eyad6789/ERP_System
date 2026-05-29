@@ -26,6 +26,18 @@
     "locked": "مقفل — تصريح غير كافٍ",
     "loading": "جارٍ التحميل…"
   },
+  "personnel": {
+    "name": "الاسم",
+    "rank": "الرتبة",
+    "department": "القسم",
+    "status": "الحالة",
+    "clearance": "التصريح",
+    "profile": "ملف الفرد",
+    "attendance": "الحضور",
+    "joined": "تاريخ الالتحاق",
+    "contract": "نوع العقد",
+    "statusValue": { "active": "في الخدمة", "leave": "إجازة", "mission": "مهمة" }
+  },
   "dashboard": {
     "totalUsers": "إجمالي المستخدمين",
     "totalRoles": "الأدوار",

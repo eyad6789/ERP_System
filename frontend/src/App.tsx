@@ -4,6 +4,7 @@ import { RequireAuth } from './auth/RequireAuth'
 import { AppShell } from './components/AppShell'
 import { DashboardPage } from './features/dashboard/DashboardPage'
 import { LoginPage } from './features/login/LoginPage'
+import { PersonnelPage } from './features/personnel/PersonnelPage'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         }
       >
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/personnel" element={<PersonnelPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>

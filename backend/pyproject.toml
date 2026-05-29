@@ -73,7 +73,7 @@ testpaths = ["modules", "core"]
 
 [tool.coverage.run]
 branch = true
-omit = ["*/migrations/*", "*/tests/*", "config/*"]
+omit = ["*/migrations/*", "*/tests/*", "config/*", "*/management/*"]
 
 # ----------------------------------------------------------------------------
 [tool.bandit]

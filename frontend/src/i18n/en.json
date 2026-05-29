@@ -26,6 +26,18 @@
     "locked": "Locked — insufficient clearance",
     "loading": "Loading…"
   },
+  "personnel": {
+    "name": "Name",
+    "rank": "Rank",
+    "department": "Department",
+    "status": "Status",
+    "clearance": "Clearance",
+    "profile": "Personnel profile",
+    "attendance": "Attendance",
+    "joined": "Joined",
+    "contract": "Contract",
+    "statusValue": { "active": "Active", "leave": "On leave", "mission": "On mission" }
+  },
   "dashboard": {
     "totalUsers": "Total users",
     "totalRoles": "Roles",
