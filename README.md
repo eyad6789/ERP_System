@@ -7,6 +7,23 @@ PostgreSQL (row-level security), Redis, Celery, Docker Compose, GitHub Actions C
 > Flagship capabilities: live RBAC + clearance enforcement, an append-only audit log, the
 > financial dashboard, and the GIS map. Security is enforced **server-side**, not just hidden in the UI.
 
+## Modules (all implemented)
+
+| Module | Capability |
+|--------|-----------|
+| IAM + Audit | Session auth, roles + clearance (1–4), append-only tamper-evident audit log |
+| Dashboard | Live KPIs, clearance distribution, 7-day audit activity (Recharts) |
+| Personnel | Org hierarchy + directory, clearance-filtered server-side, audited profiles |
+| Documents | Classification + versioning + access log; over-clearance title/body withheld |
+| Finance | Budget summary (reconciling totals), contracts (redacted), permission-checked export |
+| GIS | Clearance-filtered sites on an offline projected map with layer toggles |
+| Operations | Task board with audited status transitions |
+| Assets | Inventory with condition tracking |
+| Incidents | Severity/status workflow with audited escalation |
+
+Seed everything with `python manage.py seed_all`. Demo logins: `admin`, `officer`, `analyst`, `hr1`
+(password `<username>-demo-12345`).
+
 ## Stack
 
 | Layer    | Choice |

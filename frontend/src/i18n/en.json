@@ -41,7 +41,11 @@
     "attendance": "Attendance",
     "joined": "Joined",
     "contract": "Contract",
-    "statusValue": { "active": "Active", "leave": "On leave", "mission": "On mission" }
+    "statusValue": {
+      "active": "Active",
+      "leave": "On leave",
+      "mission": "On mission"
+    }
   },
   "dashboard": {
     "totalUsers": "Total users",
@@ -59,5 +63,76 @@
     "2": "Restricted",
     "3": "Secret",
     "4": "Top Secret"
+  },
+  "finance": {
+    "total": "Total budget",
+    "spent": "Spent",
+    "remaining": "Remaining",
+    "byDepartment": "Spend by department",
+    "title": "Contract",
+    "vendor": "Vendor",
+    "statusLabel": "Status",
+    "progress": "Progress",
+    "value": "Value",
+    "classification": "Classification",
+    "status": {
+      "signed": "Signed",
+      "in_progress": "In progress",
+      "under_review": "Under review",
+      "completed": "Completed"
+    }
+  },
+  "gis": {
+    "type": {
+      "facility": "Facility",
+      "unit": "Unit",
+      "asset": "Asset"
+    }
+  },
+  "operations": {
+    "assignee": "Assignee",
+    "dueDate": "Due Date",
+    "priorityValue": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "statusValue": {
+      "open": "Open",
+      "active": "Active",
+      "closed": "Closed"
+    }
+  },
+  "assets": {
+    "total": "Total Assets",
+    "operational": "Operational",
+    "maintenance": "Maintenance",
+    "down": "Down",
+    "name": "Name",
+    "type": "Type",
+    "location": "Location",
+    "condition": "Condition",
+    "classification": "Classification"
+  },
+  "incidents": {
+    "title": "Title",
+    "severity": "Severity",
+    "status": "Status",
+    "reportedDate": "Reported",
+    "classification": "Classification",
+    "critical": "Critical",
+    "high": "High",
+    "active": "Active",
+    "closed": "Closed",
+    "severityValue": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium"
+    },
+    "statusValue": {
+      "active": "Active",
+      "open": "Open",
+      "closed": "Closed"
+    }
   }
 }

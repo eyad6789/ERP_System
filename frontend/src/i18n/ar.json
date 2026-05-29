@@ -41,7 +41,11 @@
     "attendance": "الحضور",
     "joined": "تاريخ الالتحاق",
     "contract": "نوع العقد",
-    "statusValue": { "active": "في الخدمة", "leave": "إجازة", "mission": "مهمة" }
+    "statusValue": {
+      "active": "في الخدمة",
+      "leave": "إجازة",
+      "mission": "مهمة"
+    }
   },
   "dashboard": {
     "totalUsers": "إجمالي المستخدمين",
@@ -59,5 +63,76 @@
     "2": "مقيد",
     "3": "سري",
     "4": "سري للغاية"
+  },
+  "finance": {
+    "total": "إجمالي الميزانية",
+    "spent": "المصروف",
+    "remaining": "المتبقي",
+    "byDepartment": "الإنفاق حسب القسم",
+    "title": "العقد",
+    "vendor": "المورّد",
+    "statusLabel": "الحالة",
+    "progress": "التقدّم",
+    "value": "القيمة",
+    "classification": "التصنيف",
+    "status": {
+      "signed": "موقّع",
+      "in_progress": "قيد التنفيذ",
+      "under_review": "قيد المراجعة",
+      "completed": "مكتمل"
+    }
+  },
+  "gis": {
+    "type": {
+      "facility": "منشأة",
+      "unit": "وحدة",
+      "asset": "أصل"
+    }
+  },
+  "operations": {
+    "assignee": "المكلّف",
+    "dueDate": "تاريخ الاستحقاق",
+    "priorityValue": {
+      "high": "عالية",
+      "medium": "متوسطة",
+      "low": "منخفضة"
+    },
+    "statusValue": {
+      "open": "مفتوحة",
+      "active": "نشطة",
+      "closed": "مغلقة"
+    }
+  },
+  "assets": {
+    "total": "إجمالي الأصول",
+    "operational": "تعمل",
+    "maintenance": "صيانة",
+    "down": "متوقفة",
+    "name": "الاسم",
+    "type": "النوع",
+    "location": "الموقع",
+    "condition": "الحالة",
+    "classification": "التصنيف"
+  },
+  "incidents": {
+    "title": "العنوان",
+    "severity": "الخطورة",
+    "status": "الحالة",
+    "reportedDate": "تاريخ الإبلاغ",
+    "classification": "التصنيف",
+    "critical": "حرج",
+    "high": "مرتفع",
+    "active": "نشط",
+    "closed": "مغلق",
+    "severityValue": {
+      "critical": "حرج",
+      "high": "مرتفع",
+      "medium": "متوسط"
+    },
+    "statusValue": {
+      "active": "نشط",
+      "open": "مفتوح",
+      "closed": "مغلق"
+    }
   }
 }
