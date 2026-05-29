@@ -10,7 +10,9 @@ import { useAuth } from '../auth/AuthProvider'
 // is the source of truth; this only hides what the API already forbids.
 const MODULES = [
   'dashboard', 'personnel', 'documents', 'finance',
-  'operations', 'assets', 'gis', 'incidents', 'audit',
+  'operations', 'assets', 'gis', 'incidents',
+  'projects', 'procurement', 'inventory', 'fleet', 'risk', 'knowledge',
+  'audit',
 ] as const
 
 export function Sidebar() {

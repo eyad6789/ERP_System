@@ -18,7 +18,13 @@
     "assets": "Assets",
     "gis": "Map",
     "incidents": "Incidents",
-    "audit": "Audit Log"
+    "audit": "Audit Log",
+    "projects": "Projects",
+    "procurement": "Procurement",
+    "inventory": "Inventory",
+    "fleet": "Fleet",
+    "risk": "Risk",
+    "knowledge": "Knowledge Base"
   },
   "common": {
     "logout": "Sign out",
