@@ -24,6 +24,12 @@ ALL_MODULES = [
     "gis",
     "incidents",
     "audit",
+    "projects",
+    "procurement",
+    "inventory",
+    "fleet",
+    "risk",
+    "knowledge",
 ]
 
 ROLES: list[dict[str, Any]] = [

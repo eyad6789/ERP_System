@@ -15,11 +15,17 @@ from typing import Any
 from modules.assets.application import public as assets
 from modules.documents.application import public as documents
 from modules.finance.application import public as finance
+from modules.fleet.application import public as fleet
 from modules.gis.application import public as gis
 from modules.iam.application import public as iam
 from modules.incidents.application import public as incidents
+from modules.inventory.application import public as inventory
+from modules.knowledge.application import public as knowledge
 from modules.operations.application import public as operations
 from modules.personnel.application import public as personnel
+from modules.procurement.application import public as procurement
+from modules.projects.application import public as projects
+from modules.risk.application import public as risk
 
 # module key -> (summary fn, search fn). Order defines display order.
 _MODULES: dict[str, tuple[Callable[[Any], dict[str, Any]], Callable[..., list[dict[str, Any]]]]] = {
@@ -30,6 +36,12 @@ _MODULES: dict[str, tuple[Callable[[Any], dict[str, Any]], Callable[..., list[di
     "assets": (assets.module_summary, assets.search),
     "incidents": (incidents.module_summary, incidents.search),
     "gis": (gis.module_summary, gis.search),
+    "projects": (projects.module_summary, projects.search),
+    "procurement": (procurement.module_summary, procurement.search),
+    "inventory": (inventory.module_summary, inventory.search),
+    "fleet": (fleet.module_summary, fleet.search),
+    "risk": (risk.module_summary, risk.search),
+    "knowledge": (knowledge.module_summary, knowledge.search),
 }
 
 

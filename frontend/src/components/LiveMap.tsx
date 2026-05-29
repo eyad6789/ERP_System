@@ -16,23 +16,32 @@ export interface MapSite {
   classification: number
 }
 
-// Real dark basemap (CARTO dark, OSM data) — no API key. Production self-hosts
-// these vector/raster tiles for the air-gapped network (BUILD_PLAN §6).
+// Real satellite basemap (Esri World Imagery) — no API key. Note Esri uses
+// {z}/{y}/{x} tile order. Production self-hosts the tiles for the air-gapped
+// network (BUILD_PLAN §6). A labels overlay adds place names.
 const MAP_STYLE: StyleSpecification = {
   version: 8,
   sources: {
-    carto: {
+    imagery: {
       type: 'raster',
       tiles: [
-        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       ],
       tileSize: 256,
-      attribution: '© OpenStreetMap, © CARTO',
+      attribution: 'Imagery © Esri, Maxar, Earthstar Geographics',
+    },
+    labels: {
+      type: 'raster',
+      tiles: [
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+      ],
+      tileSize: 256,
     },
   },
-  layers: [{ id: 'carto', type: 'raster', source: 'carto' }],
+  layers: [
+    { id: 'imagery', type: 'raster', source: 'imagery' },
+    { id: 'labels', type: 'raster', source: 'labels' },
+  ],
 }
 
 export function LiveMap({

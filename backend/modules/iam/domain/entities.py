@@ -26,6 +26,12 @@ KNOWN_MODULES: tuple[str, ...] = (
     "gis",
     "incidents",
     "audit",
+    "projects",
+    "procurement",
+    "inventory",
+    "fleet",
+    "risk",
+    "knowledge",
 )
 
 

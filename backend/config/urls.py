@@ -17,4 +17,10 @@ urlpatterns = [
     path("api/assets/", include("modules.assets.interfaces.urls")),
     path("api/incidents/", include("modules.incidents.interfaces.urls")),
     path("api/ai/", include("modules.ai.interfaces.urls")),
+    path("api/projects/", include("modules.projects.interfaces.urls")),
+    path("api/procurement/", include("modules.procurement.interfaces.urls")),
+    path("api/inventory/", include("modules.inventory.interfaces.urls")),
+    path("api/fleet/", include("modules.fleet.interfaces.urls")),
+    path("api/risk/", include("modules.risk.interfaces.urls")),
+    path("api/knowledge/", include("modules.knowledge.interfaces.urls")),
 ]

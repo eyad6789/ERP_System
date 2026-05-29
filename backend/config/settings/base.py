@@ -42,6 +42,12 @@ LOCAL_APPS = [
     "modules.gis",
     "modules.incidents",
     "modules.ai",
+    "modules.projects",
+    "modules.procurement",
+    "modules.inventory",
+    "modules.fleet",
+    "modules.risk",
+    "modules.knowledge",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
