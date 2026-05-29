@@ -1,0 +1,16 @@
+title = "ERP gitleaks config"
+
+# Use the default gitleaks rule set as the base.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlisted paths and example placeholders"
+paths = [
+  '''\.env\.example$''',
+  '''secure-erp-demo\.html$''',
+]
+regexes = [
+  '''change-me''',
+  '''change-me-in-prod-use-a-long-random-string''',
+]

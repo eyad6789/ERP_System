@@ -1,0 +1,27 @@
+# Dev overrides: hot-reload backend + Vite dev server with source mounts.
+services:
+  postgres:
+    ports:
+      - "55432:5432"
+
+  api:
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+    # Host 8000 may be taken by a local process; expose dev API on 8001 instead.
+    # !override replaces the base 8000 mapping rather than appending to it.
+    ports: !override
+      - "8001:8000"
+    volumes:
+      - ./backend:/app
+
+  web:
+    image: node:20-slim
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host"
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api

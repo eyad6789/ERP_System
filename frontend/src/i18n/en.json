@@ -1,0 +1,35 @@
+{
+  "appName": "Secure Institutional Management System",
+  "classline": "CONFIDENTIAL — OFFICIAL USE ONLY",
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Protected by MFA + device trust",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in",
+    "invalid": "Invalid credentials."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "personnel": "Personnel",
+    "documents": "Documents",
+    "finance": "Finance",
+    "operations": "Operations",
+    "assets": "Assets",
+    "gis": "Map",
+    "incidents": "Incidents",
+    "audit": "Audit Log"
+  },
+  "common": {
+    "logout": "Sign out",
+    "language": "العربية",
+    "locked": "Locked — insufficient clearance",
+    "loading": "Loading…"
+  },
+  "clearance": {
+    "1": "Public",
+    "2": "Restricted",
+    "3": "Secret",
+    "4": "Top Secret"
+  }
+}

@@ -1,0 +1,22 @@
+# Lightweight project SAST rules. CI also runs the registry rulesets p/django and p/secrets.
+rules:
+  - id: no-print-statements
+    languages: [python]
+    severity: WARNING
+    message: "Use logging, not print(), in application code."
+    pattern: print(...)
+    paths:
+      exclude:
+        - "*/tests/*"
+        - "*/migrations/*"
+        - "manage.py"
+
+  - id: no-debug-true-hardcoded
+    languages: [python]
+    severity: ERROR
+    message: "DEBUG must come from the environment, never hardcoded True in shipped settings."
+    pattern: DEBUG = True
+    paths:
+      include:
+        - "config/settings/base.py"
+        - "config/settings/prod.py"

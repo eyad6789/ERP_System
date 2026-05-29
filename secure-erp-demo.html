@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>نظام الإدارة المؤسسية الآمن — Secure Institutional Management System</title>
+<style>
+  :root{
+    --bg:#0a1019; --bg2:#0d1524; --surface:#111c30; --surface2:#16233b;
+    --surface3:#1b2c49; --border:#243450; --border2:#2e4b6e;
+    --border-soft:#21314c;
+    --text:#e7edf7; --muted:#8ea0bf; --muted2:#647794;
+    --gold:#cda434; --gold-soft:#3a3116; --cyan:#46b4dd; --cyan-soft:#13354a;
+    --green:#34c98a; --red:#e35b5b; --orange:#e09236;
+    --ts:#e35b5b; --secret:#e09236; --restricted:#cda434; --public:#46b4dd;
+    --r:14px; --r-sm:9px;
+    --shadow:0 18px 50px -18px rgba(0,0,0,.7);
+    --shadow-soft:0 8px 24px -12px rgba(0,0,0,.6);
+    --font:"Segoe UI","Tahoma",system-ui,-apple-system,"Helvetica Neue",sans-serif;
+    --mono:"SF Mono","Consolas","Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:var(--font); background:var(--bg); color:var(--text);
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+  /* atmosphere */
+  .atmos{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .atmos::before{content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(900px 500px at 80% -10%, rgba(70,180,221,.10), transparent 60%),
+      radial-gradient(700px 600px at 0% 110%, rgba(205,164,52,.07), transparent 60%),
+      linear-gradient(180deg,var(--bg),var(--bg2));}
+  .atmos::after{content:"";position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+    background-size:46px 46px;}
+  #app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+
+  /* classification banner */
+  .classbar{height:22px;display:flex;align-items:center;justify-content:center;
+    font-size:11px;letter-spacing:.18em;font-weight:700;color:#1a0f0f;
+    background:repeating-linear-gradient(45deg,var(--ts),var(--ts) 14px,#c44 14px,#c44 28px);
+    text-transform:uppercase}
+
+  /* ---------- LOGIN ---------- */
+  .login-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{width:100%;max-width:440px;background:linear-gradient(180deg,var(--surface),var(--bg2));
+    border:1px solid var(--border);border-radius:var(--r);padding:40px 36px;box-shadow:var(--shadow);
+    animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+  .crest{width:74px;height:74px;margin:0 auto 18px;display:block;filter:drop-shadow(0 6px 14px rgba(205,164,52,.25))}
+  .login-card h1{font-size:20px;margin:0 0 4px;text-align:center;font-weight:700;letter-spacing:.01em}
+  .login-card .sub{text-align:center;color:var(--muted);font-size:12.5px;margin-bottom:26px;letter-spacing:.04em}
+  label{display:block;font-size:12px;color:var(--muted);margin:0 0 7px 0;letter-spacing:.03em}
+  .field{margin-bottom:16px}
+  select,input{width:100%;background:var(--bg2);color:var(--text);border:1px solid var(--border);
+    border-radius:var(--r-sm);padding:11px 13px;font-family:var(--font);font-size:14px;outline:none;transition:.18s}
+  select:focus,input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-soft)}
+  .btn{width:100%;border:0;border-radius:var(--r-sm);padding:12px;font-weight:700;font-size:14px;cursor:pointer;
+    font-family:var(--font);transition:.18s;letter-spacing:.02em}
+  .btn-primary{background:linear-gradient(180deg,var(--gold),#a9851f);color:#1a1505}
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .login-foot{margin-top:18px;text-align:center;font-size:11px;color:var(--muted2);line-height:1.7}
+  .demo-pill{display:inline-block;background:var(--cyan-soft);color:var(--cyan);border:1px solid #1f4f68;
+    border-radius:20px;padding:3px 11px;font-size:10.5px;letter-spacing:.05em;margin-top:8px}
+
+  /* ---------- SHELL ---------- */
+  .topbar{height:58px;display:flex;align-items:center;gap:16px;padding:0 18px;background:rgba(13,21,36,.85);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--border);flex-shrink:0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;white-space:nowrap}
+  .brand svg{width:30px;height:30px}
+  .topbar .spacer{flex:1}
+  .clock{font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.04em}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);
+    border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text);cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--cyan)}
+  .chip.role{background:var(--gold-soft);border-color:#5a4d1d;color:var(--gold)}
+  .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#2b6f8c);
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#04212e}
+  .icon-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);width:34px;height:34px;
+    border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+  .icon-btn:hover{color:var(--text);border-color:var(--cyan)}
+
+  .body{flex:1;display:flex;min-height:0}
+  .sidebar{width:236px;background:rgba(17,28,48,.6);border-inline-start:1px solid var(--border);
+    padding:16px 12px;flex-shrink:0;overflow-y:auto}
+  .nav-group{font-size:10.5px;letter-spacing:.14em;color:var(--muted2);text-transform:uppercase;margin:14px 10px 8px}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--muted);
+    cursor:pointer;font-size:13.5px;margin-bottom:3px;transition:.15s;font-weight:500}
+  .nav-item:hover{background:var(--surface2);color:var(--text)}
+  .nav-item.active{background:linear-gradient(90deg,var(--cyan-soft),transparent);color:var(--text);
+    box-shadow:inset 2px 0 0 var(--cyan)}
+  html[dir=rtl] .nav-item.active{box-shadow:inset -2px 0 0 var(--cyan)}
+  .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.9}
+  .nav-item .lock{margin-inline-start:auto;font-size:11px;opacity:.6}
+
+  .main{flex:1;overflow-y:auto;padding:26px 30px}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+  .page-head h2{margin:0;font-size:22px;font-weight:700;letter-spacing:.01em}
+  .page-head .desc{color:var(--muted);font-size:13px;margin-top:4px}
+
+  /* cards / grid */
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:22px}
+  .card{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);
+    border-radius:var(--r);padding:18px;box-shadow:var(--shadow-soft);animation:rise .5s both}
+  .kpi .k-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .kpi .k-label{color:var(--muted);font-size:12.5px}
+  .kpi .k-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    background:var(--cyan-soft);color:var(--cyan)}
+  .kpi .k-val{font-size:30px;font-weight:700;font-family:var(--mono);letter-spacing:-.02em}
+  .kpi .k-delta{font-size:11.5px;margin-top:6px}
+  .up{color:var(--green)} .down{color:var(--red)}
+
+  .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
+  .grid2b{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:1050px){.grid2,.grid2b{grid-template-columns:1fr}}
+  .card h3{margin:0 0 4px;font-size:14.5px;font-weight:700}
+  .card .csub{color:var(--muted);font-size:12px;margin-bottom:16px}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:start;color:var(--muted2);font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    padding:9px 10px;border-bottom:1px solid var(--border)}
+  td{padding:11px 10px;border-bottom:1px solid var(--border-soft);color:var(--text)}
+  tr:last-child td{border-bottom:0}
+  tbody tr{transition:.12s} tbody tr:hover{background:var(--surface2)}
+  .row-click{cursor:pointer}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;
+    border:1px solid transparent}
+  .b-ts{background:rgba(227,91,91,.13);color:var(--ts);border-color:rgba(227,91,91,.35)}
+  .b-secret{background:rgba(224,146,54,.13);color:var(--secret);border-color:rgba(224,146,54,.35)}
+  .b-restricted{background:rgba(205,164,52,.13);color:var(--restricted);border-color:rgba(205,164,52,.35)}
+  .b-public{background:rgba(70,180,221,.13);color:var(--public);border-color:rgba(70,180,221,.35)}
+  .b-green{background:rgba(52,201,138,.13);color:var(--green);border-color:rgba(52,201,138,.3)}
+  .b-muted{background:var(--surface3);color:var(--muted);border:1px solid var(--border)}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+
+  /* org tree */
+  .tree{font-size:13px}
+  .tree .node{padding:7px 0}
+  .tree .unit{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);
+    border-radius:9px;padding:7px 12px;font-weight:600}
+  .tree .kids{margin-inline-start:22px;border-inline-start:1px dashed var(--border);padding-inline-start:16px;margin-top:6px}
+  .tree .person{display:inline-flex;align-items:center;gap:8px;color:var(--muted);padding:5px 0;font-size:12.5px}
+
+  /* documents */
+  .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+  .doc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:.18s;position:relative;overflow:hidden}
+  .doc:hover{border-color:var(--cyan);transform:translateY(-2px)}
+  .doc.locked{opacity:.85}
+  .doc.locked::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 9px,rgba(227,91,91,.04) 9px,rgba(227,91,91,.04) 18px)}
+  .doc .d-ico{width:40px;height:40px;border-radius:9px;background:var(--surface3);display:flex;align-items:center;justify-content:center;color:var(--cyan);margin-bottom:12px}
+  .doc h4{margin:0 0 6px;font-size:14px}
+  .doc .d-meta{color:var(--muted);font-size:11.5px;line-height:1.7}
+  .doc .d-foot{display:flex;align-items:center;justify-content:space-between;margin-top:13px;padding-top:12px;border-top:1px solid var(--border-soft)}
+  .lock-msg{display:flex;align-items:center;gap:8px;color:var(--red);font-size:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-soft)}
+
+  /* map */
+  .map-wrap{position:relative;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:#0b1422}
+  .map-svg{width:100%;display:block}
+  .layers{position:absolute;inset-block-start:14px;inset-inline-end:14px;background:rgba(13,21,36,.9);
+    border:1px solid var(--border);border-radius:10px;padding:12px 14px;backdrop-filter:blur(8px);min-width:160px}
+  .layers .lt{font-size:11px;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px}
+  .layer-row{display:flex;align-items:center;gap:9px;font-size:12.5px;padding:4px 0;cursor:pointer}
+  .layer-row input{width:auto;margin:0}
+  .marker{cursor:pointer;transition:.2s}
+  .marker:hover{filter:brightness(1.3)}
+  .map-pop{position:absolute;background:rgba(13,21,36,.96);border:1px solid var(--cyan);border-radius:10px;
+    padding:11px 14px;font-size:12.5px;min-width:170px;box-shadow:var(--shadow);pointer-events:none;display:none;z-index:5}
+  .map-pop b{display:block;margin-bottom:5px;font-size:13px}
+  .map-pop .mp-row{color:var(--muted);line-height:1.7}
+
+  /* audit */
+  .audit-time{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .pulse{animation:flash 1.4s ease both}
+  @keyframes flash{0%{background:var(--cyan-soft)}100%{background:transparent}}
+
+  /* detail panel */
+  .overlay{position:fixed;inset:0;background:rgba(4,8,15,.6);backdrop-filter:blur(3px);z-index:40;display:none;
+    align-items:stretch;justify-content:flex-start}
+  html[dir=rtl] .overlay{justify-content:flex-start}
+  .panel{width:420px;max-width:92vw;height:100%;background:linear-gradient(180deg,var(--surface),var(--bg2));
+    border-inline-end:1px solid var(--border);padding:26px;overflow-y:auto;animation:slidein .3s ease both;margin-inline-start:auto}
+  html[dir=ltr] .panel{margin-inline-start:auto;margin-inline-end:0}
+  .panel .pclose{float:inline-end;cursor:pointer;color:var(--muted)}
+  .panel h3{margin:0 0 2px;font-size:19px}
+  .kv{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border-soft);font-size:13px}
+  .kv .kk{color:var(--muted)}
+
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes slidein{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+  .stagger>*{animation:rise .5s both}
+  .stagger>*:nth-child(1){animation-delay:.03s}
+  .stagger>*:nth-child(2){animation-delay:.08s}
+  .stagger>*:nth-child(3){animation-delay:.13s}
+  .stagger>*:nth-child(4){animation-delay:.18s}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+<div class="atmos"></div>
+<div id="app"></div>
+
+<!-- detail overlay -->
+<div class="overlay" id="overlay" onclick="if(event.target.id==='overlay')closePanel()">
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+/* ============================================================
+   DEMO PROTOTYPE — Secure Institutional Management System
+   Self-contained, offline. Bilingual AR/EN, role-based access,
+   live audit logging. For demonstration purposes only.
+   ============================================================ */
+
+/* ---------- i18n ---------- */
+const STR = {
+  sysName:{ar:"نظام الإدارة المؤسسية الآمن",en:"Secure Institutional Management System"},
+  sysShort:{ar:"الإدارة المؤسسية الآمنة",en:"Secure Management"},
+  classline:{ar:"سري — للاستخدام الرسمي فقط — نسخة تجريبية",en:"CONFIDENTIAL — OFFICIAL USE ONLY — DEMO"},
+  login:{ar:"تسجيل الدخول",en:"Sign In"},
+  selectRole:{ar:"اختر دور المستخدم (عرض توضيحي)",en:"Select user role (demo)"},
+  username:{ar:"اسم المستخدم",en:"Username"},
+  password:{ar:"كلمة المرور",en:"Password"},
+  signin:{ar:"دخول آمن",en:"Secure Login"},
+  mfaNote:{ar:"محمي بالمصادقة الثنائية + التحقق من الجهاز",en:"Protected by MFA + device trust"},
+  demoMode:{ar:"وضع العرض التوضيحي",en:"DEMONSTRATION MODE"},
+  logout:{ar:"تسجيل الخروج",en:"Logout"},
+  switchRole:{ar:"تبديل الدور",en:"Switch Role"},
+  nav_main:{ar:"الرئيسية",en:"Main"},
+  nav_modules:{ar:"الوحدات",en:"Modules"},
+  nav_security:{ar:"الأمن والتدقيق",en:"Security & Audit"},
+  dashboard:{ar:"لوحة المعلومات",en:"Dashboard"},
+  personnel:{ar:"شؤون الأفراد",en:"Personnel"},
+  documents:{ar:"إدارة الوثائق",en:"Documents"},
+  gis:{ar:"النظام الجغرافي",en:"GIS & Mapping"},
+  audit:{ar:"سجل التدقيق",en:"Audit Log"},
+  // dashboard
+  d_desc:{ar:"نظرة عامة فورية على العمليات والموارد",en:"Real-time overview of operations and resources"},
+  kpi_staff:{ar:"إجمالي الأفراد",en:"Total Personnel"},
+  kpi_tasks:{ar:"المهام النشطة",en:"Active Tasks"},
+  kpi_docs:{ar:"الوثائق المصنّفة",en:"Classified Documents"},
+  kpi_inc:{ar:"الحوادث المفتوحة",en:"Open Incidents"},
+  activity:{ar:"النشاط التشغيلي — آخر ٧ أيام",en:"Operational Activity — last 7 days"},
+  clearDist:{ar:"توزيع مستويات التصريح",en:"Clearance Distribution"},
+  recent:{ar:"أحدث الإجراءات",en:"Recent Actions"},
+  // personnel
+  p_desc:{ar:"الهيكل التنظيمي وملفات الأفراد ومستويات التصريح",en:"Org structure, personnel files & clearance levels"},
+  orgStruct:{ar:"الهيكل التنظيمي",en:"Organizational Structure"},
+  directory:{ar:"دليل الأفراد",en:"Personnel Directory"},
+  th_name:{ar:"الاسم",en:"Name"},th_dept:{ar:"الإدارة",en:"Department"},
+  th_rank:{ar:"الرتبة",en:"Rank"},th_clear:{ar:"التصريح",en:"Clearance"},
+  th_status:{ar:"الحالة",en:"Status"},
+  // docs
+  doc_desc:{ar:"تخزين مشفّر، تصنيف، إصدارات، وتتبّع الوصول",en:"Encrypted storage, classification, versioning & access tracking"},
+  ver:{ar:"إصدار",en:"v"},
+  owner:{ar:"المالك",en:"Owner"},
+  updated:{ar:"آخر تحديث",en:"Updated"},
+  accesslog:{ar:"سجل الوصول",en:"Access log"},
+  locked:{ar:"تصريح أعلى مطلوب للعرض",en:"Higher clearance required"},
+  views:{ar:"مرّات الوصول",en:"accesses"},
+  // gis
+  gis_desc:{ar:"المواقع التشغيلية والأصول والطبقات الجغرافية",en:"Operational sites, assets & geospatial layers"},
+  layers:{ar:"الطبقات",en:"Layers"},
+  l_facility:{ar:"المنشآت",en:"Facilities"},
+  l_unit:{ar:"الوحدات",en:"Units"},
+  l_asset:{ar:"الأصول",en:"Assets"},
+  // audit
+  a_desc:{ar:"سجل غير قابل للتعديل لكل إجراء داخل النظام",en:"Tamper-evident record of every system action"},
+  th_time:{ar:"التوقيت",en:"Time"},th_actor:{ar:"المنفّذ",en:"Actor"},
+  th_action:{ar:"الإجراء",en:"Action"},th_target:{ar:"الهدف",en:"Target"},
+  th_result:{ar:"النتيجة",en:"Result"},
+  res_ok:{ar:"مسموح",en:"GRANTED"},res_deny:{ar:"مرفوض",en:"DENIED"},
+  // actions (audit)
+  act_login:{ar:"تسجيل دخول",en:"Login"},
+  act_nav:{ar:"فتح وحدة",en:"Open module"},
+  act_role:{ar:"تبديل الدور",en:"Role switch"},
+  act_view:{ar:"عرض وثيقة",en:"View document"},
+  act_block:{ar:"محاولة وصول",en:"Access attempt"},
+  act_lang:{ar:"تغيير اللغة",en:"Language change"},
+  act_person:{ar:"عرض ملف فرد",en:"View personnel file"},
+  noaccess:{ar:"لا تملك صلاحية الوصول لهذه الوحدة",en:"You do not have permission to access this module"},
+  profile:{ar:"الملف الشخصي",en:"Profile"},
+  joined:{ar:"تاريخ الالتحاق",en:"Joined"},
+  contract:{ar:"نوع التعاقد",en:"Contract"},
+  attendance:{ar:"نسبة الحضور",en:"Attendance"},
+  active:{ar:"نشط",en:"Active"},leave:{ar:"إجازة",en:"On leave"},mission:{ar:"مهمة",en:"On mission"},
+  // nav groups + new modules
+  nav_admin:{ar:"الإدارة",en:"Administration"},
+  nav_ops:{ar:"العمليات",en:"Operations"},
+  finance:{ar:"الشؤون المالية",en:"Financial"},
+  operations:{ar:"إدارة العمليات",en:"Operations"},
+  assets:{ar:"الأصول والمخزون",en:"Assets & Inventory"},
+  incidents:{ar:"إدارة الحوادث",en:"Incidents"},
+  // financial / dashboard detail
+  fin_desc:{ar:"الميزانية، النفقات، العقود والمشتريات",en:"Budget, expenditure, contracts & procurement"},
+  budget:{ar:"الميزانية السنوية",en:"Annual Budget"},
+  spent:{ar:"المنصرف",en:"Spent"},
+  committed:{ar:"المرتبط",en:"Committed"},
+  remaining:{ar:"المتبقي",en:"Remaining"},
+  utilization:{ar:"نسبة التنفيذ",en:"Utilization"},
+  byDept:{ar:"النفقات حسب الإدارة",en:"Expenditure by Department"},
+  procurement:{ar:"العقود والمشتريات",en:"Contracts & Procurement"},
+  th_contract:{ar:"العقد",en:"Contract"},th_vendor:{ar:"المورّد",en:"Vendor"},
+  th_value:{ar:"القيمة",en:"Value"},th_progress:{ar:"الإنجاز",en:"Progress"},
+  iqd:{ar:"د.ع",en:"IQD"},
+  st_signed:{ar:"موقّع",en:"Signed"},st_progress:{ar:"قيد التنفيذ",en:"In progress"},st_review:{ar:"قيد المراجعة",en:"Under review"},st_done:{ar:"منجز",en:"Completed"},
+  // operations
+  ops_desc:{ar:"المهام التشغيلية والتخطيط والتصعيد",en:"Operational tasks, planning & escalation"},
+  th_task:{ar:"المهمة",en:"Task"},th_assignee:{ar:"المكلّف",en:"Assignee"},
+  th_priority:{ar:"الأولوية",en:"Priority"},th_due:{ar:"الاستحقاق",en:"Due"},
+  pr_high:{ar:"عالية",en:"High"},pr_med:{ar:"متوسطة",en:"Medium"},pr_low:{ar:"منخفضة",en:"Low"},
+  st_open:{ar:"مفتوحة",en:"Open"},st_active:{ar:"جارية",en:"Active"},st_closed:{ar:"مغلقة",en:"Closed"},
+  // assets
+  asset_desc:{ar:"المعدات والمركبات والمستودعات والصيانة",en:"Equipment, vehicles, warehouses & maintenance"},
+  th_asset:{ar:"الأصل",en:"Asset"},th_type:{ar:"النوع",en:"Type"},
+  th_loc:{ar:"الموقع",en:"Location"},th_cond:{ar:"الحالة الفنية",en:"Condition"},
+  cond_op:{ar:"صالح",en:"Operational"},cond_maint:{ar:"صيانة",en:"Maintenance"},cond_down:{ar:"معطّل",en:"Down"},
+  // incidents
+  inc_desc:{ar:"الإبلاغ عن الحوادث، الشدّة، التصعيد والحل",en:"Incident reporting, severity, escalation & resolution"},
+  th_inc:{ar:"الحادث",en:"Incident"},th_sev:{ar:"الشدّة",en:"Severity"},
+  sev_crit:{ar:"حرجة",en:"Critical"},sev_high:{ar:"عالية",en:"High"},sev_med:{ar:"متوسطة",en:"Medium"},
+  th_reported:{ar:"بُلّغ",en:"Reported"},
+};
+function t(k){return (STR[k]&&STR[k][S.lang])||k;}
+
+/* ---------- clearance levels ---------- */
+const CLR = {
+  1:{ar:"عام",en:"Public",cls:"b-public"},
+  2:{ar:"محدود",en:"Restricted",cls:"b-restricted"},
+  3:{ar:"سري",en:"Secret",cls:"b-secret"},
+  4:{ar:"سري للغاية",en:"Top Secret",cls:"b-ts"},
+};
+function clrName(l){return CLR[l][S.lang];}
+
+/* ---------- roles & permissions ---------- */
+const ROLES = {
+  sysadmin:{name:{ar:"مدير النظام",en:"System Administrator"},clearance:4,
+    modules:["dashboard","personnel","documents","finance","operations","assets","gis","incidents","audit"]},
+  ops:{name:{ar:"ضابط عمليات",en:"Operations Officer"},clearance:3,
+    modules:["dashboard","personnel","documents","finance","operations","assets","gis","incidents","audit"]},
+  analyst:{name:{ar:"محلل معلومات",en:"Intelligence Analyst"},clearance:2,
+    modules:["dashboard","documents","finance","gis","incidents"]},
+  hr:{name:{ar:"موظف موارد بشرية",en:"HR Officer"},clearance:2,
+    modules:["dashboard","personnel","documents"]},
+};
+
+/* ---------- seed data ---------- */
+const PEOPLE = [
+  {n:{ar:"العقيد أحمد الجبوري",en:"Col. Ahmed Al-Jabouri"},d:{ar:"العمليات",en:"Operations"},r:{ar:"عقيد",en:"Colonel"},c:4,st:"active",att:97,jo:"2009",ct:{ar:"دائم",en:"Permanent"}},
+  {n:{ar:"المقدم سارة الخفاجي",en:"Lt.Col. Sara Al-Khafaji"},d:{ar:"الاستخبارات",en:"Intelligence"},r:{ar:"مقدم",en:"Lt. Colonel"},c:4,st:"mission",att:95,jo:"2011",ct:{ar:"دائم",en:"Permanent"}},
+  {n:{ar:"الرائد يوسف العزاوي",en:"Maj. Yousef Al-Azzawi"},d:{ar:"العمليات",en:"Operations"},r:{ar:"رائد",en:"Major"},c:3,st:"active",att:91,jo:"2013",ct:{ar:"دائم",en:"Permanent"}},
+  {n:{ar:"النقيب ليلى الدليمي",en:"Capt. Layla Al-Dulaimi"},d:{ar:"تقنية المعلومات",en:"IT"},r:{ar:"نقيب",en:"Captain"},c:3,st:"active",att:99,jo:"2016",ct:{ar:"دائم",en:"Permanent"}},
+  {n:{ar:"الملازم عمر الربيعي",en:"Lt. Omar Al-Rubaie"},d:{ar:"اللوجستيات",en:"Logistics"},r:{ar:"ملازم أول",en:"Lieutenant"},c:2,st:"active",att:88,jo:"2019",ct:{ar:"دائم",en:"Permanent"}},
+  {n:{ar:"السيدة هدى الموسوي",en:"Ms. Huda Al-Mousawi"},d:{ar:"الموارد البشرية",en:"Human Resources"},r:{ar:"موظف أول",en:"Senior Officer"},c:2,st:"active",att:96,jo:"2017",ct:{ar:"دائم",en:"Permanent"}},
+  {n:{ar:"السيد كرار الشمري",en:"Mr. Karrar Al-Shammari"},d:{ar:"تقنية المعلومات",en:"IT"},r:{ar:"محلل نظم",en:"Systems Analyst"},c:2,st:"leave",att:84,jo:"2020",ct:{ar:"مؤقت",en:"Contract"}},
+  {n:{ar:"الرائد نور البياتي",en:"Maj. Noor Al-Bayati"},d:{ar:"الاستخبارات",en:"Intelligence"},r:{ar:"رائد",en:"Major"},c:3,st:"active",att:93,jo:"2014",ct:{ar:"دائم",en:"Permanent"}},
+  {n:{ar:"الملازم زينب الطائي",en:"Lt. Zainab Al-Taie"},d:{ar:"اللوجستيات",en:"Logistics"},r:{ar:"ملازم",en:"Lieutenant"},c:2,st:"mission",att:90,jo:"2021",ct:{ar:"دائم",en:"Permanent"}},
+  {n:{ar:"السيد حسين القيسي",en:"Mr. Hussein Al-Qaisi"},d:{ar:"العمليات",en:"Operations"},r:{ar:"فني",en:"Technician"},c:1,st:"active",att:87,jo:"2022",ct:{ar:"مؤقت",en:"Contract"}},
+];
+
+const DOCS = [
+  {t:{ar:"خطة العمليات الفصلية",en:"Quarterly Operations Plan"},c:3,v:"3.2",o:{ar:"العقيد أحمد",en:"Col. Ahmed"},u:"2025-05-18",acc:42},
+  {t:{ar:"تقييم المخاطر الأمنية",en:"Security Risk Assessment"},c:4,v:"1.4",o:{ar:"المقدم سارة",en:"Lt.Col. Sara"},u:"2025-05-21",acc:11},
+  {t:{ar:"دليل إجراءات اللوجستيات",en:"Logistics Procedures Manual"},c:2,v:"5.0",o:{ar:"الملازم عمر",en:"Lt. Omar"},u:"2025-04-30",acc:88},
+  {t:{ar:"لائحة الموارد البشرية",en:"HR Policy Regulations"},c:1,v:"2.1",o:{ar:"السيدة هدى",en:"Ms. Huda"},u:"2025-03-12",acc:204},
+  {t:{ar:"تقرير جاهزية الأصول",en:"Asset Readiness Report"},c:2,v:"1.0",o:{ar:"الملازم عمر",en:"Lt. Omar"},u:"2025-05-25",acc:37},
+  {t:{ar:"بروتوكول الاتصالات المشفّرة",en:"Encrypted Comms Protocol"},c:4,v:"2.0",o:{ar:"النقيب ليلى",en:"Capt. Layla"},u:"2025-05-09",acc:6},
+  {t:{ar:"مصفوفة الصلاحيات والأدوار",en:"Roles & Permissions Matrix"},c:3,v:"4.3",o:{ar:"مدير النظام",en:"Sys Admin"},u:"2025-05-27",acc:19},
+  {t:{ar:"دليل الإبلاغ عن الحوادث",en:"Incident Reporting Guide"},c:1,v:"1.2",o:{ar:"العقيد أحمد",en:"Col. Ahmed"},u:"2025-02-08",acc:131},
+];
+
+const SITES = [
+  {n:{ar:"المقر الرئيسي — بغداد",en:"HQ — Baghdad"},type:"facility",x:430,y:230,info:{ar:"منشأة قيادية · ٣ مبانٍ",en:"Command facility · 3 buildings"}},
+  {n:{ar:"مركز عمليات — البصرة",en:"Ops Center — Basra"},type:"unit",x:480,y:430,info:{ar:"وحدة عمليات · ٢٤ فرداً",en:"Ops unit · 24 personnel"}},
+  {n:{ar:"مستودع لوجستي — الموصل",en:"Logistics Depot — Mosul"},type:"asset",x:360,y:120,info:{ar:"مستودع · ١٢ مركبة",en:"Depot · 12 vehicles"}},
+  {n:{ar:"مركز اتصالات — أربيل",en:"Comms Site — Erbil"},type:"facility",x:430,y:95,info:{ar:"منشأة اتصالات",en:"Comms facility"}},
+  {n:{ar:"وحدة ميدانية — النجف",en:"Field Unit — Najaf"},type:"unit",x:400,y:340,info:{ar:"وحدة ميدانية · ١٦ فرداً",en:"Field unit · 16 personnel"}},
+  {n:{ar:"نقطة أصول — كركوك",en:"Asset Point — Kirkuk"},type:"asset",x:415,y:165,info:{ar:"أصول · ٨ وحدات",en:"Assets · 8 units"}},
+  {n:{ar:"وحدة ميدانية — الرمادي",en:"Field Unit — Ramadi"},type:"unit",x:330,y:235,info:{ar:"وحدة ميدانية · ٩ أفراد",en:"Field unit · 9 personnel"}},
+];
+
+/* financial (figures in billions IQD) */
+const FIN = {
+  budget:480.0, spent:312.5, committed:74.2,
+  byDept:[
+    {d:{ar:"العمليات",en:"Operations"},v:138.4},
+    {d:{ar:"الاستخبارات",en:"Intelligence"},v:96.1},
+    {d:{ar:"اللوجستيات",en:"Logistics"},v:71.8},
+    {d:{ar:"تقنية المعلومات",en:"IT"},v:42.0},
+    {d:{ar:"الموارد البشرية",en:"Human Resources"},v:38.4},
+  ],
+};
+const CONTRACTS = [
+  {t:{ar:"تحديث شبكة الاتصالات المشفّرة",en:"Encrypted network upgrade"},vendor:{ar:"شركة الرافدين للتقنية",en:"Rafidain Tech"},val:48.5,prog:72,st:"st_progress",c:3},
+  {t:{ar:"توريد مركبات ميدانية",en:"Field vehicle procurement"},vendor:{ar:"المجموعة العربية",en:"Arab Group"},val:31.2,prog:100,st:"st_done",c:2},
+  {t:{ar:"نظام المراقبة المؤسسية",en:"Facility monitoring system"},vendor:{ar:"دجلة للأنظمة",en:"Tigris Systems"},val:27.8,prog:45,st:"st_progress",c:3},
+  {t:{ar:"عقد صيانة سنوي",en:"Annual maintenance contract"},vendor:{ar:"بابل للخدمات",en:"Babel Services"},val:12.4,prog:0,st:"st_review",c:2},
+  {t:{ar:"تجهيزات مراكز البيانات",en:"Data center equipment"},vendor:{ar:"شركة الرافدين للتقنية",en:"Rafidain Tech"},val:55.0,prog:88,st:"st_progress",c:4},
+];
+const TASKS = [
+  {t:{ar:"مراجعة خطة الانتشار الفصلية",en:"Review quarterly deployment plan"},a:{ar:"الرائد يوسف",en:"Maj. Yousef"},pr:"pr_high",due:"2025-06-02",st:"st_active",c:3},
+  {t:{ar:"تدقيق صلاحيات النظام",en:"System permissions audit"},a:{ar:"النقيب ليلى",en:"Capt. Layla"},pr:"pr_high",due:"2025-06-05",st:"st_open",c:3},
+  {t:{ar:"تحديث سجلات الأفراد",en:"Update personnel records"},a:{ar:"السيدة هدى",en:"Ms. Huda"},pr:"pr_med",due:"2025-06-08",st:"st_active",c:2},
+  {t:{ar:"جرد المستودع الرئيسي",en:"Main warehouse inventory"},a:{ar:"الملازم عمر",en:"Lt. Omar"},pr:"pr_med",due:"2025-06-10",st:"st_open",c:2},
+  {t:{ar:"إعداد تقرير الجاهزية",en:"Prepare readiness report"},a:{ar:"الرائد نور",en:"Maj. Noor"},pr:"pr_low",due:"2025-05-30",st:"st_closed",c:3},
+];
+const ASSETS = [
+  {n:{ar:"مركبة دورية A-204",en:"Patrol vehicle A-204"},type:{ar:"مركبة",en:"Vehicle"},loc:{ar:"بغداد",en:"Baghdad"},cond:"cond_op",c:2},
+  {n:{ar:"خادم بيانات DC-11",en:"Data server DC-11"},type:{ar:"معدات تقنية",en:"IT equipment"},loc:{ar:"أربيل",en:"Erbil"},cond:"cond_op",c:3},
+  {n:{ar:"جهاز اتصال مشفّر C-58",en:"Encrypted comms C-58"},type:{ar:"اتصالات",en:"Comms"},loc:{ar:"البصرة",en:"Basra"},cond:"cond_maint",c:4},
+  {n:{ar:"مولّد كهرباء G-7",en:"Generator G-7"},type:{ar:"معدات",en:"Equipment"},loc:{ar:"الموصل",en:"Mosul"},cond:"cond_op",c:1},
+  {n:{ar:"مركبة نقل T-31",en:"Transport vehicle T-31"},type:{ar:"مركبة",en:"Vehicle"},loc:{ar:"النجف",en:"Najaf"},cond:"cond_down",c:2},
+  {n:{ar:"وحدة طاقة احتياطية UPS-3",en:"Backup power UPS-3"},type:{ar:"معدات",en:"Equipment"},loc:{ar:"بغداد",en:"Baghdad"},cond:"cond_op",c:1},
+];
+const INCIDENTS = [
+  {t:{ar:"محاولة وصول غير مصرّح",en:"Unauthorized access attempt"},sev:"sev_crit",st:"st_active",rep:"2025-05-28",c:4},
+  {t:{ar:"انقطاع في شبكة فرعية",en:"Subnet connectivity outage"},sev:"sev_high",st:"st_active",rep:"2025-05-27",c:3},
+  {t:{ar:"عطل في نظام تبريد المركز",en:"Data center cooling fault"},sev:"sev_med",st:"st_open",rep:"2025-05-26",c:2},
+  {t:{ar:"تأخر في تسليم عقد توريد",en:"Procurement delivery delay"},sev:"sev_med",st:"st_closed",rep:"2025-05-22",c:2},
+];
+
+/* ---------- state ---------- */
+const S = {
+  lang:"ar",
+  loggedIn:false,
+  role:"sysadmin",
+  view:"dashboard",
+  audit:[],
+  newAuditId:null,
+  mapLayers:{facility:true,unit:true,asset:true},
+};
+let _aid=0;
+
+/* ---------- audit ---------- */
+function logAudit(actionKey,target,result){
+  _aid++;
+  const now=new Date();
+  S.audit.unshift({
+    id:_aid,
+    time:now.toLocaleTimeString(S.lang==="ar"?"ar-IQ":"en-GB",{hour12:false}),
+    actor:ROLES[S.role].name[S.lang],
+    action:t(actionKey),
+    target:target||"—",
+    result:result===false?"deny":"ok",
+  });
+  S.newAuditId=_aid;
+  if(S.audit.length>60)S.audit.pop();
+}
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+function esc(x){return String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function can(mod){return ROLES[S.role].modules.includes(mod);}
+function myClear(){return ROLES[S.role].clearance;}
+
+/* ---------- icons ---------- */
+const I={
+  dashboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+  personnel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>',
+  documents:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg>',
+  gis:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.5 2V6L9 4l6 2 5.5-2v16L15 22z"/><path d="M9 4v16M15 6v16"/></svg>',
+  audit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+  finance:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+  operations:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+  assets:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/></svg>',
+  incidents:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>',
+};
+function crest(size){return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cda434"/><stop offset="1" stop-color="#a9851f"/></linearGradient></defs>
+  <path d="M50 6 L86 18 V46 C86 70 50 94 50 94 C50 94 14 70 14 46 V18 Z" fill="#111c30" stroke="url(#g1)" stroke-width="3"/>
+  <path d="M50 22 l5.5 11 12 1.5 -9 8.5 2.5 12 -11-6 -11 6 2.5-12 -9-8.5 12-1.5 z" fill="url(#g1)"/>
+  <circle cx="50" cy="64" r="9" fill="none" stroke="#46b4dd" stroke-width="2.4"/>
+  <path d="M50 58 v12 M44 64 h12" stroke="#46b4dd" stroke-width="2.4"/>
+</svg>`;}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  document.documentElement.lang=S.lang;
+  document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
+  $("#app").innerHTML = S.loggedIn ? shell() : loginView();
+  if(S.loggedIn) startClock();
+}
+
+/* ---------- login ---------- */
+function loginView(){
+  const opts=Object.entries(ROLES).map(([k,r])=>`<option value="${k}" ${k===S.role?"selected":""}>${r.name[S.lang]} · ${clrName(r.clearance)}</option>`).join("");
+  return `<div class="classbar">${t("classline")}</div>
+  <div class="login-wrap"><div class="login-card">
+    ${crest(74).replace('<svg','<svg class="crest"')}
+    <h1>${t("sysName")}</h1>
+    <div class="sub">SECURE INSTITUTIONAL MANAGEMENT SYSTEM</div>
+    <div class="field"><label>${t("selectRole")}</label>
+      <select id="roleSel">${opts}</select></div>
+    <div class="field"><label>${t("username")}</label><input value="user.demo" /></div>
+    <div class="field"><label>${t("password")}</label><input type="password" value="••••••••••" /></div>
+    <button class="btn btn-primary" onclick="doLogin()">${t("signin")}</button>
+    <div class="login-foot">🔒 ${t("mfaNote")}
+      <br><span class="demo-pill">${t("demoMode")}</span></div>
+  </div></div>`;
+}
+function doLogin(){
+  const sel=$("#roleSel"); if(sel)S.role=sel.value;
+  S.loggedIn=true; S.view="dashboard";
+  logAudit("act_login","",true);
+  render();
+}
+
+/* ---------- shell ---------- */
+function shell(){
+  return `<div class="classbar">${t("classline")}</div>
+  <div class="topbar">
+    <div class="brand">${crest(30)}<span>${t("sysShort")}</span></div>
+    <div class="spacer"></div>
+    <div class="clock" id="clock"></div>
+    <div class="chip" onclick="toggleLang()">${I.globe}<span>${S.lang==="ar"?"EN":"عربي"}</span></div>
+    <div class="chip role" onclick="cycleRole()" title="${t('switchRole')}">${ROLES[S.role].name[S.lang]}</div>
+    <div class="avatar">${ROLES[S.role].name[S.lang].slice(0,1)}</div>
+    <button class="icon-btn" onclick="doLogout()" title="${t('logout')}">⎋</button>
+  </div>
+  <div class="body">
+    ${sidebar()}
+    <div class="main" id="main">${page()}</div>
+  </div>`;
+}
+function sidebar(){
+  const item=(mod)=>{
+    const allowed=can(mod);
+    return `<div class="nav-item ${S.view===mod?"active":""}" onclick="go('${mod}')">
+      ${I[mod]}<span>${t(mod)}</span>${allowed?"":'<span class="lock">'+I.lock+'</span>'}</div>`;
+  };
+  return `<div class="sidebar">
+    <div class="nav-group">${t("nav_main")}</div>
+    ${item("dashboard")}
+    <div class="nav-group">${t("nav_admin")}</div>
+    ${item("personnel")}${item("documents")}${item("finance")}
+    <div class="nav-group">${t("nav_ops")}</div>
+    ${item("operations")}${item("assets")}${item("gis")}${item("incidents")}
+    <div class="nav-group">${t("nav_security")}</div>
+    ${item("audit")}
+  </div>`;
+}
+
+/* ---------- navigation ---------- */
+function go(mod){
+  if(!can(mod)){
+    logAudit("act_block",t(mod),false);
+    S.view=mod; // show no-access page
+    $("#main").innerHTML=noAccess();
+    refreshSidebar(); return;
+  }
+  S.view=mod;
+  logAudit("act_nav",t(mod),true);
+  $("#main").innerHTML=page();
+  refreshSidebar();
+}
+function refreshSidebar(){const sb=document.querySelector(".sidebar");if(sb)sb.outerHTML=sidebar();}
+function noAccess(){
+  return `<div class="page-head"><div><h2>${t(S.view)}</h2></div></div>
+  <div class="card" style="text-align:center;padding:60px 20px">
+    <div style="color:var(--red);margin-bottom:14px">${I.lock.replace('width="18"','width="40"').replace('height="18"','height="40"')}</div>
+    <h3 style="color:var(--red)">${t("noaccess")}</h3>
+    <div class="csub" style="margin-top:6px">${ROLES[S.role].name[S.lang]} · ${clrName(myClear())}</div>
+  </div>`;
+}
+
+/* ---------- pages ---------- */
+function page(){
+  switch(S.view){
+    case"dashboard":return dashboard();
+    case"personnel":return personnel();
+    case"documents":return documents();
+    case"finance":return finance();
+    case"operations":return operations();
+    case"assets":return assetsView();
+    case"gis":return gisView();
+    case"incidents":return incidents();
+    case"audit":return auditView();
+    default:return dashboard();
+  }
+}
+
+function fmtB(v){return (S.lang==="ar"? v.toFixed(1)+" مليار" : v.toFixed(1)+"B");}
+
+function dashboard(){
+  const kpi=(label,val,ico,delta,up)=>`<div class="card kpi">
+    <div class="k-top"><span class="k-label">${label}</span><span class="k-ico">${ico}</span></div>
+    <div class="k-val">${val}</div>
+    <div class="k-delta ${up?'up':'down'}">${up?'▲':'▼'} ${delta}</div></div>`;
+  const bars=[58,72,49,83,67,91,76].map((h,i)=>`<rect x="${i*40+14}" y="${120-h}" width="22" height="${h}" rx="4" fill="url(#bg)" opacity="${.6+i*.05}"/>`).join("");
+  const dist=[1,2,3,4].map(l=>PEOPLE.filter(p=>p.c===l).length);
+  const tot=dist.reduce((a,b)=>a+b,0); let off=0;
+  const colors=["#46b4dd","#cda434","#e09236","#e35b5b"];
+  const segs=dist.map((v,i)=>{const frac=v/tot;const dash=frac*339.292;const s=`<circle r="54" cx="70" cy="70" fill="none" stroke="${colors[i]}" stroke-width="16" stroke-dasharray="${dash} 339.292" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;off+=dash;return s;}).join("");
+  const recent=S.audit.slice(0,6).map(a=>`<tr><td class="audit-time">${a.time}</td><td>${esc(a.action)}</td><td style="color:var(--muted)">${esc(a.target)}</td><td><span class="badge ${a.result==='ok'?'b-green':'b-ts'}">${a.result==='ok'?t('res_ok'):t('res_deny')}</span></td></tr>`).join("");
+  // financial summary
+  const remaining=FIN.budget-FIN.spent-FIN.committed;
+  const util=Math.round(FIN.spent/FIN.budget*100);
+  const finCard=(label,val,color)=>`<div class="card kpi"><div class="k-label">${label}</div>
+    <div class="k-val" style="font-size:24px;color:${color}">${fmtB(val)}<span style="font-size:12px;color:var(--muted)"> ${t("iqd")}</span></div></div>`;
+  const maxDept=Math.max(...FIN.byDept.map(d=>d.v));
+  const deptBars=FIN.byDept.map(d=>`<div style="margin-bottom:13px">
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px"><span>${esc(d.d[S.lang])}</span><span style="color:var(--muted);font-family:var(--mono)">${fmtB(d.v)}</span></div>
+    <div style="height:8px;background:var(--surface3);border-radius:6px;overflow:hidden"><div style="height:100%;width:${d.v/maxDept*100}%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:6px"></div></div></div>`).join("");
+  return `<div class="page-head"><div><h2>${t("dashboard")}</h2><div class="desc">${t("d_desc")}</div></div></div>
+  <div class="kpi-grid stagger">
+    ${kpi(t("kpi_staff"),"1,240",I.personnel,"3.2% ",true)}
+    ${kpi(t("kpi_tasks"),"127",I.operations,"8 ",true)}
+    ${kpi(t("kpi_docs"),"1,812",I.documents,"1.1% ",true)}
+    ${kpi(t("kpi_inc"),"4",I.incidents,"2 ",false)}
+  </div>
+  <div class="card" style="margin-bottom:22px">
+    <h3>${t("finance")} — ${t("budget")}</h3><div class="csub">${t("utilization")}: ${util}%</div>
+    <div class="kpi-grid" style="margin-bottom:14px">
+      ${finCard(t("budget"),FIN.budget,"var(--text)")}
+      ${finCard(t("spent"),FIN.spent,"var(--orange)")}
+      ${finCard(t("committed"),FIN.committed,"var(--gold)")}
+      ${finCard(t("remaining"),remaining,"var(--green)")}
+    </div>
+    <div style="height:12px;background:var(--surface3);border-radius:8px;overflow:hidden;display:flex">
+      <div style="width:${FIN.spent/FIN.budget*100}%;background:var(--orange)"></div>
+      <div style="width:${FIN.committed/FIN.budget*100}%;background:var(--gold)"></div>
+    </div>
+    <div style="display:flex;gap:18px;margin-top:9px;font-size:11.5px;color:var(--muted)">
+      <span><span class="dot" style="background:var(--orange)"></span> ${t("spent")}</span>
+      <span><span class="dot" style="background:var(--gold)"></span> ${t("committed")}</span>
+      <span><span class="dot" style="background:var(--surface3)"></span> ${t("remaining")}</span>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>${t("activity")}</h3><div class="csub">—</div>
+      <svg viewBox="0 0 300 130" style="width:100%"><defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#46b4dd"/><stop offset="1" stop-color="#2b6f8c"/></linearGradient></defs>
+      <line x1="10" y1="120" x2="290" y2="120" stroke="#243450"/>${bars}</svg></div>
+    <div class="card"><h3>${t("clearDist")}</h3><div class="csub">—</div>
+      <div style="display:flex;align-items:center;gap:20px">
+      <svg viewBox="0 0 140 140" width="130" height="130">${segs}<text x="70" y="76" text-anchor="middle" fill="#e7edf7" font-size="22" font-family="monospace">${tot}</text></svg>
+      <div style="font-size:12.5px;line-height:2.1">
+        ${[4,3,2,1].map(l=>`<div><span class="dot" style="background:${colors[l-1]}"></span> ${clrName(l)} · ${PEOPLE.filter(p=>p.c===l).length}</div>`).join("")}
+      </div></div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>${t("byDept")}</h3><div class="csub">${t("iqd")} — ${S.lang==="ar"?"مليار":"billions"}</div>${deptBars}</div>
+    <div class="card"><h3>${t("recent")}</h3><div class="csub">—</div>
+      <table><thead><tr><th>${t("th_time")}</th><th>${t("th_action")}</th><th>${t("th_target")}</th><th>${t("th_result")}</th></tr></thead>
+      <tbody>${recent}</tbody></table></div>
+  </div>`;
+}
+
+function personnel(){
+  const visible=PEOPLE.filter(p=>p.c<=myClear());
+  const rows=visible.map((p,i)=>`<tr class="row-click" onclick="openPerson(${PEOPLE.indexOf(p)})">
+    <td><div style="display:flex;align-items:center;gap:10px"><span class="avatar" style="width:26px;height:26px;font-size:10px">${p.n[S.lang].slice(0,1)}</span>${esc(p.n[S.lang])}</div></td>
+    <td style="color:var(--muted)">${esc(p.d[S.lang])}</td>
+    <td>${esc(p.r[S.lang])}</td>
+    <td><span class="badge ${CLR[p.c].cls}">${clrName(p.c)}</span></td>
+    <td><span class="badge ${p.st==='active'?'b-green':'b-muted'}">${t(p.st)}</span></td></tr>`).join("");
+  // org tree
+  const depts={};PEOPLE.forEach(p=>{const d=p.d[S.lang];(depts[d]=depts[d]||[]).push(p);});
+  const tree=Object.entries(depts).map(([d,arr])=>`<div class="node"><span class="unit">${I.personnel}${esc(d)} · ${arr.length}</span>
+    <div class="kids">${arr.filter(p=>p.c<=myClear()).map(p=>`<div><span class="person">› ${esc(p.n[S.lang])} <span class="badge ${CLR[p.c].cls}" style="font-size:9px;padding:1px 7px">${clrName(p.c)}</span></span></div>`).join("")}</div></div>`).join("");
+  const hidden=PEOPLE.length-visible.length;
+  return `<div class="page-head"><div><h2>${t("personnel")}</h2><div class="desc">${t("p_desc")}</div></div>
+    <div class="chip">${t("th_clear")}: ${clrName(myClear())}</div></div>
+  <div class="grid2b">
+    <div class="card"><h3>${t("directory")}</h3><div class="csub">${visible.length} ${hidden>0?`· (${hidden} ${S.lang==='ar'?'مخفي لعدم كفاية التصريح':'hidden — clearance'})`:''}</div>
+      <table><thead><tr><th>${t("th_name")}</th><th>${t("th_dept")}</th><th>${t("th_rank")}</th><th>${t("th_clear")}</th><th>${t("th_status")}</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="card"><h3>${t("orgStruct")}</h3><div class="csub">—</div><div class="tree">${tree}</div></div>
+  </div>`;
+}
+function openPerson(i){
+  const p=PEOPLE[i];
+  logAudit("act_person",p.n[S.lang],true);
+  $("#panel").innerHTML=`<div class="pclose" onclick="closePanel()">✕</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+      <span class="avatar" style="width:54px;height:54px;font-size:20px">${p.n[S.lang].slice(0,1)}</span>
+      <div><h3>${esc(p.n[S.lang])}</h3><div class="csub" style="margin:0">${esc(p.r[S.lang])} · ${esc(p.d[S.lang])}</div></div></div>
+    <div class="kv"><span class="kk">${t("th_clear")}</span><span class="badge ${CLR[p.c].cls}">${clrName(p.c)}</span></div>
+    <div class="kv"><span class="kk">${t("th_status")}</span><span>${t(p.st)}</span></div>
+    <div class="kv"><span class="kk">${t("joined")}</span><span>${p.jo}</span></div>
+    <div class="kv"><span class="kk">${t("contract")}</span><span>${esc(p.ct[S.lang])}</span></div>
+    <div class="kv"><span class="kk">${t("attendance")}</span><span class="up">${p.att}%</span></div>`;
+  $("#overlay").style.display="flex";
+}
+
+function documents(){
+  const cards=DOCS.map((d,i)=>{
+    const locked=d.c>myClear();
+    return `<div class="doc ${locked?'locked':''}">
+      <div class="d-ico">${locked?I.lock:I.doc}</div>
+      <h4>${locked?'<span style="filter:blur(4px)">'+esc(d.t[S.lang])+'</span>':esc(d.t[S.lang])}</h4>
+      <div class="d-meta">${t("owner")}: ${locked?'—':esc(d.o[S.lang])}<br>${t("updated")}: ${locked?'—':d.u}</div>
+      <div class="d-foot">
+        <span class="badge ${CLR[d.c].cls}">${clrName(d.c)}</span>
+        ${locked?'':`<span class="badge b-muted">${t("ver")} ${d.v}</span>`}
+      </div>
+      ${locked
+        ? `<div class="lock-msg">${I.lock} ${t("locked")}</div>`
+        : `<div style="margin-top:11px;font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between"><span>${d.acc} ${t("views")}</span><a style="color:var(--cyan);cursor:pointer" onclick="viewDoc(${i})">${t("accesslog")} →</a></div>`}
+    </div>`;
+  }).join("");
+  return `<div class="page-head"><div><h2>${t("documents")}</h2><div class="desc">${t("doc_desc")}</div></div>
+    <div class="chip">${t("th_clear")}: ${clrName(myClear())}</div></div>
+  <div class="doc-grid stagger">${cards}</div>`;
+}
+function viewDoc(i){const d=DOCS[i];logAudit("act_view",d.t[S.lang],true);go("audit");}
+
+function gisView(){
+  const markerColor={facility:"#46b4dd",unit:"#cda434",asset:"#34c98a"};
+  const markers=SITES.filter(s=>S.mapLayers[s.type]).map((s,i)=>`
+    <g class="marker" onmousemove="mapPop(event,${SITES.indexOf(s)})" onmouseleave="hidePop()">
+      <circle cx="${s.x}" cy="${s.y}" r="13" fill="${markerColor[s.type]}" opacity="0.18"/>
+      <circle cx="${s.x}" cy="${s.y}" r="6" fill="${markerColor[s.type]}"/>
+      <circle cx="${s.x}" cy="${s.y}" r="6" fill="none" stroke="${markerColor[s.type]}" opacity="0.5"><animate attributeName="r" from="6" to="15" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite"/></circle>
+    </g>`).join("");
+  const layerRow=(key,label,color)=>`<div class="layer-row" onclick="toggleLayer('${key}')">
+    <input type="checkbox" ${S.mapLayers[key]?'checked':''} onclick="event.stopPropagation();toggleLayer('${key}')">
+    <span class="dot" style="background:${color}"></span><span>${label}</span></div>`;
+  return `<div class="page-head"><div><h2>${t("gis")}</h2><div class="desc">${t("gis_desc")}</div></div></div>
+  <div class="map-wrap">
+    <svg class="map-svg" viewBox="0 0 700 500" preserveAspectRatio="xMidYMid meet">
+      <defs><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#15253b"/><stop offset="1" stop-color="#0f1a2c"/></linearGradient></defs>
+      <rect width="700" height="500" fill="#0b1422"/>
+      <!-- stylized Iraq silhouette -->
+      <path d="M300 70 L470 60 L520 110 L505 180 L560 240 L530 330 L490 470 L420 460 L380 380 L330 360 L300 300 L250 270 L270 200 L300 150 Z"
+        fill="url(#land)" stroke="#2e4b6e" stroke-width="2" stroke-opacity="0.7"/>
+      <g stroke="#243450" stroke-width="0.5" opacity="0.5">
+        ${Array.from({length:14}).map((_,i)=>`<line x1="${i*50}" y1="0" x2="${i*50}" y2="500"/>`).join("")}
+        ${Array.from({length:10}).map((_,i)=>`<line x1="0" y1="${i*50}" x2="700" y2="${i*50}"/>`).join("")}
+      </g>
+      ${markers}
+    </svg>
+    <div class="layers">
+      <div class="lt">${t("layers")}</div>
+      ${layerRow("facility",t("l_facility"),"#46b4dd")}
+      ${layerRow("unit",t("l_unit"),"#cda434")}
+      ${layerRow("asset",t("l_asset"),"#34c98a")}
+    </div>
+    <div class="map-pop" id="mapPop"></div>
+  </div>`;
+}
+function toggleLayer(k){S.mapLayers[k]=!S.mapLayers[k];$("#main").innerHTML=gisView();}
+function mapPop(e,i){const s=SITES[i];const pop=$("#mapPop");const wrap=e.currentTarget.closest(".map-wrap").getBoundingClientRect();
+  pop.innerHTML=`<b>${esc(s.n[S.lang])}</b><div class="mp-row">${esc(s.info[S.lang])}</div>`;
+  pop.style.display="block";pop.style.left=(e.clientX-wrap.left+14)+"px";pop.style.top=(e.clientY-wrap.top+14)+"px";}
+function hidePop(){const p=$("#mapPop");if(p)p.style.display="none";}
+
+function auditView(){
+  const rows=S.audit.map(a=>`<tr class="${a.id===S.newAuditId?'pulse':''}">
+    <td class="audit-time">${a.time}</td>
+    <td>${esc(a.actor)}</td>
+    <td>${esc(a.action)}</td>
+    <td style="color:var(--muted)">${esc(a.target)}</td>
+    <td><span class="badge ${a.result==='ok'?'b-green':'b-ts'}">${a.result==='ok'?t('res_ok'):t('res_deny')}</span></td></tr>`).join("");
+  S.newAuditId=null;
+  return `<div class="page-head"><div><h2>${t("audit")}</h2><div class="desc">${t("a_desc")}</div></div>
+    <div class="chip"><span class="dot" style="background:var(--green)"></span> ${S.audit.length}</div></div>
+  <div class="card"><table><thead><tr><th>${t("th_time")}</th><th>${t("th_actor")}</th><th>${t("th_action")}</th><th>${t("th_target")}</th><th>${t("th_result")}</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+function finance(){
+  const remaining=FIN.budget-FIN.spent-FIN.committed;
+  const util=Math.round(FIN.spent/FIN.budget*100);
+  const card=(label,val,color)=>`<div class="card kpi"><div class="k-label">${label}</div>
+    <div class="k-val" style="font-size:24px;color:${color}">${fmtB(val)}<span style="font-size:12px;color:var(--muted)"> ${t("iqd")}</span></div></div>`;
+  const visible=CONTRACTS.filter(c=>c.c<=myClear());
+  const hidden=CONTRACTS.length-visible.length;
+  const stCls={st_done:"b-green",st_progress:"b-public",st_review:"b-restricted",st_signed:"b-muted"};
+  const rows=visible.map(c=>`<tr>
+    <td>${esc(c.t[S.lang])}</td>
+    <td style="color:var(--muted)">${esc(c.vendor[S.lang])}</td>
+    <td style="font-family:var(--mono)">${fmtB(c.val)}</td>
+    <td style="min-width:110px"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:6px;background:var(--surface3);border-radius:5px;overflow:hidden"><div style="height:100%;width:${c.prog}%;background:var(--cyan)"></div></div><span style="font-size:11px;color:var(--muted)">${c.prog}%</span></div></td>
+    <td><span class="badge ${stCls[c.st]}">${t(c.st)}</span></td>
+    <td><span class="badge ${CLR[c.c].cls}">${clrName(c.c)}</span></td></tr>`).join("");
+  return `<div class="page-head"><div><h2>${t("finance")}</h2><div class="desc">${t("fin_desc")}</div></div>
+    <div class="chip">${t("utilization")}: ${util}%</div></div>
+  <div class="kpi-grid stagger" style="margin-bottom:22px">
+    ${card(t("budget"),FIN.budget,"var(--text)")}
+    ${card(t("spent"),FIN.spent,"var(--orange)")}
+    ${card(t("committed"),FIN.committed,"var(--gold)")}
+    ${card(t("remaining"),remaining,"var(--green)")}
+  </div>
+  <div class="card"><h3>${t("procurement")}</h3><div class="csub">${visible.length} ${hidden>0?`· (${hidden} ${S.lang==='ar'?'مخفي — تصريح أعلى':'restricted'})`:''}</div>
+    <table><thead><tr><th>${t("th_contract")}</th><th>${t("th_vendor")}</th><th>${t("th_value")}</th><th>${t("th_progress")}</th><th>${t("th_status")}</th><th>${t("th_clear")}</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+function operations(){
+  const prCls={pr_high:"b-ts",pr_med:"b-restricted",pr_low:"b-public"};
+  const stCls={st_active:"b-green",st_open:"b-restricted",st_closed:"b-muted"};
+  const visible=TASKS.filter(x=>x.c<=myClear());
+  const rows=visible.map(x=>`<tr>
+    <td>${esc(x.t[S.lang])}</td>
+    <td style="color:var(--muted)">${esc(x.a[S.lang])}</td>
+    <td><span class="badge ${prCls[x.pr]}">${t(x.pr)}</span></td>
+    <td class="audit-time">${x.due}</td>
+    <td><span class="badge ${stCls[x.st]}">${t(x.st)}</span></td>
+    <td><span class="badge ${CLR[x.c].cls}">${clrName(x.c)}</span></td></tr>`).join("");
+  const cols=[["st_open","b-restricted"],["st_active","b-green"],["st_closed","b-muted"]];
+  const board=cols.map(([k,cls])=>{const items=visible.filter(x=>x.st===k);
+    return `<div class="card"><h3>${t(k)} <span class="badge ${cls}" style="margin-inline-start:6px">${items.length}</span></h3><div class="csub">—</div>
+      ${items.map(x=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:9px">
+        <div style="font-size:13px;margin-bottom:6px">${esc(x.t[S.lang])}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="badge ${prCls[x.pr]}" style="font-size:10px">${t(x.pr)}</span><span style="font-size:11px;color:var(--muted)">${esc(x.a[S.lang])}</span></div></div>`).join("")||'<div class="csub">—</div>'}</div>`;}).join("");
+  return `<div class="page-head"><div><h2>${t("operations")}</h2><div class="desc">${t("ops_desc")}</div></div></div>
+  <div class="kpi-grid stagger" style="grid-template-columns:repeat(3,1fr);margin-bottom:22px">${board}</div>
+  <div class="card"><h3>${t("operations")}</h3><div class="csub">—</div>
+    <table><thead><tr><th>${t("th_task")}</th><th>${t("th_assignee")}</th><th>${t("th_priority")}</th><th>${t("th_due")}</th><th>${t("th_status")}</th><th>${t("th_clear")}</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+function assetsView(){
+  const condCls={cond_op:"b-green",cond_maint:"b-restricted",cond_down:"b-ts"};
+  const visible=ASSETS.filter(x=>x.c<=myClear());
+  const rows=visible.map(x=>`<tr>
+    <td>${esc(x.n[S.lang])}</td>
+    <td style="color:var(--muted)">${esc(x.type[S.lang])}</td>
+    <td>${esc(x.loc[S.lang])}</td>
+    <td><span class="badge ${condCls[x.cond]}">${t(x.cond)}</span></td>
+    <td><span class="badge ${CLR[x.c].cls}">${clrName(x.c)}</span></td></tr>`).join("");
+  const opCount=visible.filter(x=>x.cond==="cond_op").length;
+  const kpi=(l,v,c)=>`<div class="card kpi"><div class="k-label">${l}</div><div class="k-val" style="font-size:26px;color:${c}">${v}</div></div>`;
+  return `<div class="page-head"><div><h2>${t("assets")}</h2><div class="desc">${t("asset_desc")}</div></div></div>
+  <div class="kpi-grid stagger" style="margin-bottom:22px">
+    ${kpi(S.lang==='ar'?'إجمالي الأصول':'Total assets',visible.length,"var(--text)")}
+    ${kpi(t("cond_op"),opCount,"var(--green)")}
+    ${kpi(t("cond_maint"),visible.filter(x=>x.cond==="cond_maint").length,"var(--gold)")}
+    ${kpi(t("cond_down"),visible.filter(x=>x.cond==="cond_down").length,"var(--red)")}
+  </div>
+  <div class="card"><h3>${t("assets")}</h3><div class="csub">—</div>
+    <table><thead><tr><th>${t("th_asset")}</th><th>${t("th_type")}</th><th>${t("th_loc")}</th><th>${t("th_cond")}</th><th>${t("th_clear")}</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+function incidents(){
+  const sevCls={sev_crit:"b-ts",sev_high:"b-secret",sev_med:"b-restricted"};
+  const stCls={st_active:"b-green",st_open:"b-restricted",st_closed:"b-muted"};
+  const visible=INCIDENTS.filter(x=>x.c<=myClear());
+  const rows=visible.map(x=>`<tr>
+    <td>${esc(x.t[S.lang])}</td>
+    <td><span class="badge ${sevCls[x.sev]}">${t(x.sev)}</span></td>
+    <td><span class="badge ${stCls[x.st]}">${t(x.st)}</span></td>
+    <td class="audit-time">${x.rep}</td>
+    <td><span class="badge ${CLR[x.c].cls}">${clrName(x.c)}</span></td></tr>`).join("");
+  const kpi=(l,v,c)=>`<div class="card kpi"><div class="k-label">${l}</div><div class="k-val" style="font-size:26px;color:${c}">${v}</div></div>`;
+  return `<div class="page-head"><div><h2>${t("incidents")}</h2><div class="desc">${t("inc_desc")}</div></div></div>
+  <div class="kpi-grid stagger" style="margin-bottom:22px">
+    ${kpi(t("sev_crit"),visible.filter(x=>x.sev==="sev_crit").length,"var(--red)")}
+    ${kpi(t("sev_high"),visible.filter(x=>x.sev==="sev_high").length,"var(--orange)")}
+    ${kpi(t("st_active"),visible.filter(x=>x.st==="st_active").length,"var(--green)")}
+    ${kpi(t("st_closed"),visible.filter(x=>x.st==="st_closed").length,"var(--muted)")}
+  </div>
+  <div class="card"><h3>${t("incidents")}</h3><div class="csub">—</div>
+    <table><thead><tr><th>${t("th_inc")}</th><th>${t("th_sev")}</th><th>${t("th_status")}</th><th>${t("th_reported")}</th><th>${t("th_clear")}</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+/* ---------- controls ---------- */
+function toggleLang(){S.lang=S.lang==="ar"?"en":"ar";logAudit("act_lang",S.lang.toUpperCase(),true);render();}
+function cycleRole(){
+  const keys=Object.keys(ROLES);const idx=keys.indexOf(S.role);
+  S.role=keys[(idx+1)%keys.length];
+  logAudit("act_role",ROLES[S.role].name[S.lang],true);
+  if(!can(S.view))S.view="dashboard";
+  render();
+}
+function doLogout(){S.loggedIn=false;render();}
+function closePanel(){$("#overlay").style.display="none";}
+
+/* ---------- clock ---------- */
+let clockTimer=null;
+function startClock(){
+  if(clockTimer)clearInterval(clockTimer);
+  const tick=()=>{const c=$("#clock");if(c)c.textContent=new Date().toLocaleTimeString(S.lang==="ar"?"ar-IQ":"en-GB",{hour12:false})+"  ·  "+new Date().toLocaleDateString(S.lang==="ar"?"ar-IQ":"en-GB");};
+  tick();clockTimer=setInterval(tick,1000);
+}
+
+/* ---------- boot ---------- */
+render();
+</script>
+</body>
+</html>
