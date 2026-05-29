@@ -26,6 +26,11 @@
     "locked": "Locked — insufficient clearance",
     "loading": "Loading…"
   },
+  "documents": {
+    "access": "Views",
+    "owner": "Owner",
+    "versionHistory": "Version history"
+  },
   "personnel": {
     "name": "Name",
     "rank": "Rank",

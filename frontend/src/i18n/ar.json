@@ -26,6 +26,11 @@
     "locked": "مقفل — تصريح غير كافٍ",
     "loading": "جارٍ التحميل…"
   },
+  "documents": {
+    "access": "مرات الاطلاع",
+    "owner": "المالك",
+    "versionHistory": "سجل النسخ"
+  },
   "personnel": {
     "name": "الاسم",
     "rank": "الرتبة",
