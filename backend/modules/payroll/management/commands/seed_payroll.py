@@ -3,6 +3,7 @@ on save (base + allowances - deductions)."""
 
 from __future__ import annotations
 
+from decimal import Decimal
 from typing import Any
 
 from django.core.management.base import BaseCommand
@@ -32,9 +33,9 @@ class Command(BaseCommand):
                 employee=employee,
                 period=period,
                 defaults={
-                    "base": base,
-                    "allowances": allowances,
-                    "deductions": deductions,
+                    "base": Decimal(base),
+                    "allowances": Decimal(allowances),
+                    "deductions": Decimal(deductions),
                     "classification": clazz,
                 },
             )
