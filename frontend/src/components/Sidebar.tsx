@@ -42,9 +42,11 @@ const GROUP_ICON: Record<string, ReactNode> = {
   platform: <ExtensionIcon fontSize="small" />,
 }
 
-const STORAGE_KEY = 'erp.sidebar.collapsed'
+const STORAGE_KEY = 'erp.sidebar.expanded'
 
-function loadCollapsed(): Record<string, boolean> {
+// Groups are COLLAPSED by default — only the ~8 department headers show until the
+// user opens one (or it holds the active route). Keeps the rail compact.
+function loadExpanded(): Record<string, boolean> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     return raw ? (JSON.parse(raw) as Record<string, boolean>) : {}
@@ -61,10 +63,10 @@ export function Sidebar() {
   const isSysadmin = me?.role?.code === 'sysadmin'
 
   const [filter, setFilter] = useState('')
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(loadCollapsed)
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(loadExpanded)
 
   const toggle = (key: string) => {
-    setCollapsed((prev) => {
+    setExpanded((prev) => {
       const next = { ...prev, [key]: !prev[key] }
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
@@ -130,7 +132,7 @@ export function Sidebar() {
 
   const renderGroup = ({ group, items }: { group: NavGroup; items: string[] }) => {
     const filtering = filter.trim().length > 0
-    const open = filtering || !collapsed[group.key] || items.includes(activeItem)
+    const open = filtering || !!expanded[group.key] || items.includes(activeItem)
     const owned = !!me?.department && me.department === group.ownerDept
     const accessible = items.filter((i) => !isGated(i) || can(i)).length
 
