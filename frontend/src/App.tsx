@@ -2,6 +2,12 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { RequireAuth } from './auth/RequireAuth'
 import { AppShell } from './components/AppShell'
+import { ActivityStreamPage } from './features/activity/ActivityStreamPage'
+import { ArchivePage } from './features/archive/ArchivePage'
+import { CalendarPage } from './features/calendar/CalendarPage'
+import { DevelopersPage } from './features/developers/DevelopersPage'
+import { IntegrationsPage } from './features/integrations/IntegrationsPage'
+import { ReportsPage } from './features/reports/ReportsPage'
 import { AdminPage } from './features/admin/AdminPage'
 import { AnnouncementsPage } from './features/announcements/AnnouncementsPage'
 import { AssetsPage } from './features/assets/AssetsPage'
@@ -73,6 +79,12 @@ export default function App() {
         <Route path="/announcements" element={<AnnouncementsPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/audit" element={<AuditPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/activity" element={<ActivityStreamPage />} />
+        <Route path="/archive" element={<ArchivePage />} />
+        <Route path="/integrations" element={<IntegrationsPage />} />
+        <Route path="/developers" element={<DevelopersPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/security" element={<SecurityPage />} />
         <Route path="/settings" element={<SettingsPage />} />

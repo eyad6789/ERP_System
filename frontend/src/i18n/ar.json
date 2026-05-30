@@ -36,7 +36,13 @@
     "training": "مركز التدريب",
     "contracts": "العقود",
     "announcements": "الإعلانات",
-    "events": "الأحداث"
+    "events": "الأحداث",
+    "calendar": "التقويم",
+    "reports": "التقارير",
+    "activity": "سجل النشاط",
+    "archive": "الأرشيف",
+    "integrations": "التكاملات",
+    "developers": "بوابة المطورين"
   },
   "common": {
     "logout": "تسجيل الخروج",

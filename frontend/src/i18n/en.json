@@ -36,7 +36,13 @@
     "training": "Training",
     "contracts": "Contracts",
     "announcements": "Announcements",
-    "events": "Events"
+    "events": "Events",
+    "calendar": "Calendar",
+    "reports": "Reports",
+    "activity": "Activity",
+    "archive": "Archive",
+    "integrations": "Integrations",
+    "developers": "Developers"
   },
   "common": {
     "logout": "Sign out",
