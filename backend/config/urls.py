@@ -23,4 +23,10 @@ urlpatterns = [
     path("api/fleet/", include("modules.fleet.interfaces.urls")),
     path("api/risk/", include("modules.risk.interfaces.urls")),
     path("api/knowledge/", include("modules.knowledge.interfaces.urls")),
+    path("api/attendance/", include("modules.attendance.interfaces.urls")),
+    path("api/leave/", include("modules.leave.interfaces.urls")),
+    path("api/payroll/", include("modules.payroll.interfaces.urls")),
+    path("api/helpdesk/", include("modules.helpdesk.interfaces.urls")),
+    path("api/compliance/", include("modules.compliance.interfaces.urls")),
+    path("api/meetings/", include("modules.meetings.interfaces.urls")),
 ]

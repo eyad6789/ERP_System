@@ -13,15 +13,21 @@ from collections.abc import Callable
 from typing import Any
 
 from modules.assets.application import public as assets
+from modules.attendance.application import public as attendance
+from modules.compliance.application import public as compliance
 from modules.documents.application import public as documents
 from modules.finance.application import public as finance
 from modules.fleet.application import public as fleet
 from modules.gis.application import public as gis
+from modules.helpdesk.application import public as helpdesk
 from modules.iam.application import public as iam
 from modules.incidents.application import public as incidents
 from modules.inventory.application import public as inventory
 from modules.knowledge.application import public as knowledge
+from modules.leave.application import public as leave
+from modules.meetings.application import public as meetings
 from modules.operations.application import public as operations
+from modules.payroll.application import public as payroll
 from modules.personnel.application import public as personnel
 from modules.procurement.application import public as procurement
 from modules.projects.application import public as projects
@@ -42,6 +48,12 @@ _MODULES: dict[str, tuple[Callable[[Any], dict[str, Any]], Callable[..., list[di
     "fleet": (fleet.module_summary, fleet.search),
     "risk": (risk.module_summary, risk.search),
     "knowledge": (knowledge.module_summary, knowledge.search),
+    "attendance": (attendance.module_summary, attendance.search),
+    "leave": (leave.module_summary, leave.search),
+    "payroll": (payroll.module_summary, payroll.search),
+    "helpdesk": (helpdesk.module_summary, helpdesk.search),
+    "compliance": (compliance.module_summary, compliance.search),
+    "meetings": (meetings.module_summary, meetings.search),
 }
 
 

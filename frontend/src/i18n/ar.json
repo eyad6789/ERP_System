@@ -24,7 +24,13 @@
     "inventory": "المخزون",
     "fleet": "المركبات",
     "risk": "المخاطر",
-    "knowledge": "قاعدة المعرفة"
+    "knowledge": "قاعدة المعرفة",
+    "attendance": "الحضور",
+    "leave": "الإجازات",
+    "payroll": "الرواتب",
+    "helpdesk": "مكتب المساعدة",
+    "compliance": "الامتثال",
+    "meetings": "الاجتماعات"
   },
   "common": {
     "logout": "تسجيل الخروج",

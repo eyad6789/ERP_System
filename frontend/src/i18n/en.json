@@ -24,7 +24,13 @@
     "inventory": "Inventory",
     "fleet": "Fleet",
     "risk": "Risk",
-    "knowledge": "Knowledge Base"
+    "knowledge": "Knowledge Base",
+    "attendance": "Attendance",
+    "leave": "Leave",
+    "payroll": "Payroll",
+    "helpdesk": "Help Desk",
+    "compliance": "Compliance",
+    "meetings": "Meetings"
   },
   "common": {
     "logout": "Sign out",

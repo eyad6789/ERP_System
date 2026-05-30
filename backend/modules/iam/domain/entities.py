@@ -32,6 +32,12 @@ KNOWN_MODULES: tuple[str, ...] = (
     "fleet",
     "risk",
     "knowledge",
+    "attendance",
+    "leave",
+    "payroll",
+    "helpdesk",
+    "compliance",
+    "meetings",
 )
 
 

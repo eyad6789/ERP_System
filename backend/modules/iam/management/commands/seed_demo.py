@@ -30,6 +30,12 @@ ALL_MODULES = [
     "fleet",
     "risk",
     "knowledge",
+    "attendance",
+    "leave",
+    "payroll",
+    "helpdesk",
+    "compliance",
+    "meetings",
 ]
 
 ROLES: list[dict[str, Any]] = [

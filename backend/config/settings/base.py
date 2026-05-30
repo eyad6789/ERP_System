@@ -48,6 +48,12 @@ LOCAL_APPS = [
     "modules.fleet",
     "modules.risk",
     "modules.knowledge",
+    "modules.attendance",
+    "modules.leave",
+    "modules.payroll",
+    "modules.helpdesk",
+    "modules.compliance",
+    "modules.meetings",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
