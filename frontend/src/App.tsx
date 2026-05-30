@@ -4,15 +4,19 @@ import { RequireAuth } from './auth/RequireAuth'
 import { AppShell } from './components/AppShell'
 import { ActivityStreamPage } from './features/activity/ActivityStreamPage'
 import { ArchivePage } from './features/archive/ArchivePage'
+import { DashboardBuilderPage } from './features/builder/DashboardBuilderPage'
 import { CalendarPage } from './features/calendar/CalendarPage'
 import { ChatPage } from './features/chat/ChatPage'
 import { DepartmentsPage } from './features/departments/DepartmentsPage'
 import { DevelopersPage } from './features/developers/DevelopersPage'
 import { FormBuilderPage } from './features/forms/FormBuilderPage'
 import { IntegrationsPage } from './features/integrations/IntegrationsPage'
+import { MarketplacePage } from './features/marketplace/MarketplacePage'
 import { OcrPage } from './features/ocr/OcrPage'
+import { ReportBuilderPage } from './features/reportbuilder/ReportBuilderPage'
 import { ReportsPage } from './features/reports/ReportsPage'
 import { SignaturesPage } from './features/signatures/SignaturesPage'
+import { DigitalTwinPage } from './features/twin/DigitalTwinPage'
 import { WorkflowsPage } from './features/workflows/WorkflowsPage'
 import { AdminPage } from './features/admin/AdminPage'
 import { AnnouncementsPage } from './features/announcements/AnnouncementsPage'
@@ -97,6 +101,10 @@ export default function App() {
         <Route path="/ocr" element={<OcrPage />} />
         <Route path="/signatures" element={<SignaturesPage />} />
         <Route path="/departments" element={<DepartmentsPage />} />
+        <Route path="/builder" element={<DashboardBuilderPage />} />
+        <Route path="/reportbuilder" element={<ReportBuilderPage />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/twin" element={<DigitalTwinPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/security" element={<SecurityPage />} />
         <Route path="/settings" element={<SettingsPage />} />

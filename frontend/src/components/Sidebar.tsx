@@ -7,8 +7,9 @@ import { useAuth } from '../auth/AuthProvider'
 
 // Platform tools — not clearance-gated modules; always available to any signed-in user.
 const TOOLS = [
-  'calendar', 'reports', 'activity', 'departments', 'workflows', 'forms',
-  'chat', 'ocr', 'signatures', 'archive', 'integrations', 'developers',
+  'calendar', 'reports', 'reportbuilder', 'builder', 'twin', 'activity',
+  'departments', 'workflows', 'forms', 'chat', 'ocr', 'signatures',
+  'archive', 'marketplace', 'integrations', 'developers',
 ] as const
 
 // All modules in display order. Each is rendered, but locked (disabled) when the

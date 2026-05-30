@@ -48,7 +48,11 @@
     "chat": "Chat",
     "ocr": "OCR Center",
     "signatures": "Signatures",
-    "departments": "Departments"
+    "departments": "Departments",
+    "builder": "Dashboard Builder",
+    "reportbuilder": "Report Builder",
+    "marketplace": "Marketplace",
+    "twin": "Digital Twin"
   },
   "common": {
     "logout": "Sign out",

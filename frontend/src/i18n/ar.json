@@ -48,7 +48,11 @@
     "chat": "المحادثات",
     "ocr": "التعرّف الضوئي",
     "signatures": "التواقيع الرقمية",
-    "departments": "الأقسام"
+    "departments": "الأقسام",
+    "builder": "منشئ اللوحات",
+    "reportbuilder": "منشئ التقارير",
+    "marketplace": "سوق الإضافات",
+    "twin": "التوأم الرقمي"
   },
   "common": {
     "logout": "تسجيل الخروج",
