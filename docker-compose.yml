@@ -72,7 +72,9 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost/"]
+      # 127.0.0.1, not localhost: busybox wget resolves localhost to ::1 (IPv6) but
+      # nginx listens on IPv4 0.0.0.0:80, which made the check fail though serving was fine.
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
       interval: 10s
       timeout: 5s
       retries: 5
