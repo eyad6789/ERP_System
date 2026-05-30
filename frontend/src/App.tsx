@@ -9,15 +9,19 @@ import { CalendarPage } from './features/calendar/CalendarPage'
 import { ChatPage } from './features/chat/ChatPage'
 import { DepartmentsPage } from './features/departments/DepartmentsPage'
 import { DevelopersPage } from './features/developers/DevelopersPage'
+import { FilesPage } from './features/files/FilesPage'
 import { FormBuilderPage } from './features/forms/FormBuilderPage'
+import { ImportPage } from './features/import/ImportPage'
 import { IntegrationsPage } from './features/integrations/IntegrationsPage'
 import { MarketplacePage } from './features/marketplace/MarketplacePage'
 import { OcrPage } from './features/ocr/OcrPage'
+import { ScannerPage } from './features/scanner/ScannerPage'
 import { ReportBuilderPage } from './features/reportbuilder/ReportBuilderPage'
 import { ReportsPage } from './features/reports/ReportsPage'
 import { SignaturesPage } from './features/signatures/SignaturesPage'
 import { DigitalTwinPage } from './features/twin/DigitalTwinPage'
 import { WorkflowsPage } from './features/workflows/WorkflowsPage'
+import { WorkspacesPage } from './features/workspaces/WorkspacesPage'
 import { AdminPage } from './features/admin/AdminPage'
 import { AnnouncementsPage } from './features/announcements/AnnouncementsPage'
 import { AssetsPage } from './features/assets/AssetsPage'
@@ -65,6 +69,7 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/personnel" element={<PersonnelPage />} />
         <Route path="/documents" element={<DocumentsPage />} />
+        <Route path="/files" element={<FilesPage />} />
         <Route path="/finance" element={<FinancePage />} />
         <Route path="/gis" element={<GisPage />} />
         <Route path="/operations" element={<OperationsPage />} />
@@ -99,8 +104,11 @@ export default function App() {
         <Route path="/forms" element={<FormBuilderPage />} />
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/ocr" element={<OcrPage />} />
+        <Route path="/scanner" element={<ScannerPage />} />
+        <Route path="/import" element={<ImportPage />} />
         <Route path="/signatures" element={<SignaturesPage />} />
         <Route path="/departments" element={<DepartmentsPage />} />
+        <Route path="/workspaces" element={<WorkspacesPage />} />
         <Route path="/builder" element={<DashboardBuilderPage />} />
         <Route path="/reportbuilder" element={<ReportBuilderPage />} />
         <Route path="/marketplace" element={<MarketplacePage />} />

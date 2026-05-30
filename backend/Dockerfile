@@ -19,8 +19,11 @@ RUN pip install --upgrade pip && pip install -e .
 COPY . .
 RUN chmod +x entrypoint.sh
 
-# Non-root runtime user.
-RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+# Non-root runtime user. Pre-create the media dir so uploaded attachments are
+# writable in the prod image (in dev a host bind-mount supplies a writable ./media).
+RUN useradd --create-home --uid 10001 appuser \
+    && mkdir -p /app/media \
+    && chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000

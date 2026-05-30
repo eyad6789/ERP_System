@@ -14,6 +14,7 @@ from typing import Any
 
 from modules.announcements.application import public as announcements
 from modules.assets.application import public as assets
+from modules.attachments.application import public as attachments
 from modules.attendance.application import public as attendance
 from modules.compliance.application import public as compliance
 from modules.contracts.application import public as contracts
@@ -66,6 +67,7 @@ _MODULES: dict[str, tuple[Callable[[Any], dict[str, Any]], Callable[..., list[di
     "contracts": (contracts.module_summary, contracts.search),
     "announcements": (announcements.module_summary, announcements.search),
     "events": (events.module_summary, events.search),
+    "files": (attachments.module_summary, attachments.search),
 }
 
 

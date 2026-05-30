@@ -44,6 +44,7 @@ KNOWN_MODULES: tuple[str, ...] = (
     "contracts",
     "announcements",
     "events",
+    "files",
 )
 
 

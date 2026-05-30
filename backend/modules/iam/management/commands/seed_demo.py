@@ -42,6 +42,7 @@ ALL_MODULES = [
     "contracts",
     "announcements",
     "events",
+    "files",
 ]
 
 ROLES: list[dict[str, Any]] = [
@@ -63,14 +64,14 @@ ROLES: list[dict[str, Any]] = [
         "code": "analyst",
         "name_ar": "محلل",
         "name_en": "Analyst",
-        "modules": ["dashboard", "documents", "finance", "gis", "incidents"],
+        "modules": ["dashboard", "documents", "finance", "gis", "incidents", "files"],
         "clearance": ClearanceLevel.RESTRICTED,
     },
     {
         "code": "hr",
         "name_ar": "موارد بشرية",
         "name_en": "Human Resources",
-        "modules": ["dashboard", "personnel", "documents"],
+        "modules": ["dashboard", "personnel", "documents", "files"],
         "clearance": ClearanceLevel.RESTRICTED,
     },
 ]

@@ -35,4 +35,6 @@ urlpatterns = [
     path("api/contracts/", include("modules.contracts.interfaces.urls")),
     path("api/announcements/", include("modules.announcements.interfaces.urls")),
     path("api/events/", include("modules.events.interfaces.urls")),
+    path("api/attachments/", include("modules.attachments.interfaces.urls")),
+    path("api/workspaces/", include("modules.workspaces.interfaces.urls")),
 ]

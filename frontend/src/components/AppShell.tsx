@@ -129,9 +129,9 @@ export function AppShell() {
           </Menu>
         </Toolbar>
       </AppBar>
-      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <Box sx={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <Sidebar />
-        <Box component="main" sx={{ flex: 1, p: 3, overflow: 'auto' }}>
+        <Box component="main" sx={{ flex: 1, minHeight: 0, p: 3, overflow: 'auto' }}>
           <Outlet />
         </Box>
       </Box>

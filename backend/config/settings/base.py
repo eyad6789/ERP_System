@@ -60,6 +60,8 @@ LOCAL_APPS = [
     "modules.contracts",
     "modules.announcements",
     "modules.events",
+    "modules.attachments",
+    "modules.workspaces",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -163,6 +165,13 @@ USE_TZ = True
 # --- Static ---
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# --- Media (uploaded files / attachments) ---
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+# Cap uploads at 25 MB (the nginx proxy is configured to match).
+DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

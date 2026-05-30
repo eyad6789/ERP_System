@@ -52,7 +52,11 @@
     "builder": "Dashboard Builder",
     "reportbuilder": "Report Builder",
     "marketplace": "Marketplace",
-    "twin": "Digital Twin"
+    "twin": "Digital Twin",
+    "files": "Files",
+    "scanner": "AI Scanner",
+    "import": "Data Import",
+    "workspaces": "Department Workspaces"
   },
   "common": {
     "logout": "Sign out",
@@ -71,7 +75,8 @@
     "searchHere": "Search…",
     "confirmDelete": "Delete this record? This action is audited.",
     "saved": "Saved",
-    "required": "Required"
+    "required": "Required",
+    "copy": "Copy"
   },
   "documents": {
     "access": "Views",
@@ -277,5 +282,115 @@
   },
   "command": {
     "placeholder": "Type a command or search… (Ctrl+K)"
+  },
+  "files": {
+    "title": "Files",
+    "total": "Total files",
+    "totalSize": "Total size",
+    "documents": "Documents",
+    "spreadsheets": "Spreadsheets",
+    "upload": "Upload",
+    "dropHere": "Drag & drop files here",
+    "dropHint": "or select files from your device",
+    "classification": "Classification",
+    "select": "Select files",
+    "uploading": "Uploading…",
+    "library": "File library",
+    "search": "Search files",
+    "empty": "No files found",
+    "name": "Name",
+    "size": "Size",
+    "owner": "Owner",
+    "created": "Created",
+    "download": "Download",
+    "deleteTitle": "Delete file",
+    "deleteBody": "Are you sure you want to delete this file? This action is audited.",
+    "kind": {
+      "document": "document",
+      "spreadsheet": "spreadsheet",
+      "image": "image",
+      "invoice": "invoice",
+      "other": "other"
+    }
+  },
+  "scanner": {
+    "title": "AI Invoice Scanner",
+    "onDevice": "On-device",
+    "privacy": "OCR runs locally in your browser via an on-device engine; no image or data is uploaded until you explicitly save.",
+    "scannedSession": "Scanned this session",
+    "lastTotal": "Last total detected",
+    "upload": "Upload invoice",
+    "dropHint": "Click to choose or drag an image here",
+    "accept": "PNG, JPG — image files only",
+    "preview": "Invoice preview",
+    "recognizing": "Recognizing text…",
+    "fields": "Extracted fields",
+    "invoiceNumber": "Invoice number",
+    "date": "Date",
+    "vendor": "Vendor",
+    "currency": "Currency",
+    "subtotal": "Subtotal",
+    "tax": "Tax (VAT)",
+    "total": "Total",
+    "lineItems": "Line items",
+    "itemDescription": "Description",
+    "itemQty": "Qty",
+    "itemPrice": "Price",
+    "save": "Save to Files",
+    "rawText": "Recognized text",
+    "noText": "No text recognized yet.",
+    "savedMsg": "Invoice saved to Files.",
+    "copiedMsg": "Text copied to clipboard."
+  },
+  "import": {
+    "title": "Data Import",
+    "upload": "Upload file",
+    "dropHint": "Drag & drop a CSV or Excel file, or click to browse",
+    "accepted": "Accepted: .csv, .xlsx, .xls",
+    "classification": "Classification",
+    "parseError": "Could not parse this file.",
+    "uploadError": "Import failed. Please try again.",
+    "success": "File imported successfully.",
+    "rows": "Rows",
+    "columns": "Columns",
+    "fileSize": "File size",
+    "emptyCells": "Empty cells detected",
+    "preview": "Preview",
+    "previewNote": "First 50 rows",
+    "reset": "Reset",
+    "save": "Import",
+    "type": {
+      "number": "number",
+      "date": "date",
+      "text": "text"
+    }
+  },
+  "navGroups": {
+    "search": "Filter pages…",
+    "noMatch": "No pages match your filter.",
+    "yours": "Your department — you can edit this workspace"
+  },
+  "workspaces": {
+    "title": "Department Workspaces",
+    "subtitle": "Each department curates and edits its own workspace",
+    "totalDepartments": "Departments",
+    "youCanEdit": "You can edit",
+    "yourDepartment": "Your department",
+    "yours": "Your department",
+    "mission": "Mission",
+    "head": "Department head",
+    "pages": "Pages",
+    "updatedBy": "Updated by {{who}} on {{when}}",
+    "neverUpdated": "Not yet customized",
+    "lockHint": "Only the owning department can edit this workspace.",
+    "empty": "No workspaces are available.",
+    "editTitle": "Edit workspace",
+    "name": "Name",
+    "description": "Description",
+    "accent": "Accent color",
+    "featured": "Featured pages (comma separated)",
+    "featuredHint": "Nav keys to pin, e.g. dashboard, reports",
+    "saveError": "Could not save. You may not be permitted to edit this workspace.",
+    "saved": "Workspace updated"
   }
 }
