@@ -42,7 +42,13 @@
     "activity": "Activity",
     "archive": "Archive",
     "integrations": "Integrations",
-    "developers": "Developers"
+    "developers": "Developers",
+    "workflows": "Workflows",
+    "forms": "Form Builder",
+    "chat": "Chat",
+    "ocr": "OCR Center",
+    "signatures": "Signatures",
+    "departments": "Departments"
   },
   "common": {
     "logout": "Sign out",

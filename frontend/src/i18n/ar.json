@@ -42,7 +42,13 @@
     "activity": "سجل النشاط",
     "archive": "الأرشيف",
     "integrations": "التكاملات",
-    "developers": "بوابة المطورين"
+    "developers": "بوابة المطورين",
+    "workflows": "سير العمل",
+    "forms": "منشئ النماذج",
+    "chat": "المحادثات",
+    "ocr": "التعرّف الضوئي",
+    "signatures": "التواقيع الرقمية",
+    "departments": "الأقسام"
   },
   "common": {
     "logout": "تسجيل الخروج",

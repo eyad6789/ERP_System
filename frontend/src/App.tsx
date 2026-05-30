@@ -5,9 +5,15 @@ import { AppShell } from './components/AppShell'
 import { ActivityStreamPage } from './features/activity/ActivityStreamPage'
 import { ArchivePage } from './features/archive/ArchivePage'
 import { CalendarPage } from './features/calendar/CalendarPage'
+import { ChatPage } from './features/chat/ChatPage'
+import { DepartmentsPage } from './features/departments/DepartmentsPage'
 import { DevelopersPage } from './features/developers/DevelopersPage'
+import { FormBuilderPage } from './features/forms/FormBuilderPage'
 import { IntegrationsPage } from './features/integrations/IntegrationsPage'
+import { OcrPage } from './features/ocr/OcrPage'
 import { ReportsPage } from './features/reports/ReportsPage'
+import { SignaturesPage } from './features/signatures/SignaturesPage'
+import { WorkflowsPage } from './features/workflows/WorkflowsPage'
 import { AdminPage } from './features/admin/AdminPage'
 import { AnnouncementsPage } from './features/announcements/AnnouncementsPage'
 import { AssetsPage } from './features/assets/AssetsPage'
@@ -85,6 +91,12 @@ export default function App() {
         <Route path="/archive" element={<ArchivePage />} />
         <Route path="/integrations" element={<IntegrationsPage />} />
         <Route path="/developers" element={<DevelopersPage />} />
+        <Route path="/workflows" element={<WorkflowsPage />} />
+        <Route path="/forms" element={<FormBuilderPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/ocr" element={<OcrPage />} />
+        <Route path="/signatures" element={<SignaturesPage />} />
+        <Route path="/departments" element={<DepartmentsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/security" element={<SecurityPage />} />
         <Route path="/settings" element={<SettingsPage />} />
