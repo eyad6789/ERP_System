@@ -12,10 +12,13 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
+from modules.announcements.application import public as announcements
 from modules.assets.application import public as assets
 from modules.attendance.application import public as attendance
 from modules.compliance.application import public as compliance
+from modules.contracts.application import public as contracts
 from modules.documents.application import public as documents
+from modules.events.application import public as events
 from modules.finance.application import public as finance
 from modules.fleet.application import public as fleet
 from modules.gis.application import public as gis
@@ -28,10 +31,13 @@ from modules.leave.application import public as leave
 from modules.meetings.application import public as meetings
 from modules.operations.application import public as operations
 from modules.payroll.application import public as payroll
+from modules.performance.application import public as performance
 from modules.personnel.application import public as personnel
 from modules.procurement.application import public as procurement
 from modules.projects.application import public as projects
+from modules.recruitment.application import public as recruitment
 from modules.risk.application import public as risk
+from modules.training.application import public as training
 
 # module key -> (summary fn, search fn). Order defines display order.
 _MODULES: dict[str, tuple[Callable[[Any], dict[str, Any]], Callable[..., list[dict[str, Any]]]]] = {
@@ -54,6 +60,12 @@ _MODULES: dict[str, tuple[Callable[[Any], dict[str, Any]], Callable[..., list[di
     "helpdesk": (helpdesk.module_summary, helpdesk.search),
     "compliance": (compliance.module_summary, compliance.search),
     "meetings": (meetings.module_summary, meetings.search),
+    "recruitment": (recruitment.module_summary, recruitment.search),
+    "performance": (performance.module_summary, performance.search),
+    "training": (training.module_summary, training.search),
+    "contracts": (contracts.module_summary, contracts.search),
+    "announcements": (announcements.module_summary, announcements.search),
+    "events": (events.module_summary, events.search),
 }
 
 
