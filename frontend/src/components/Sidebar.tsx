@@ -12,6 +12,7 @@ const MODULES = [
   'dashboard', 'personnel', 'documents', 'finance',
   'operations', 'assets', 'gis', 'incidents',
   'projects', 'procurement', 'inventory', 'fleet', 'risk', 'knowledge',
+  'attendance', 'leave', 'payroll', 'helpdesk', 'compliance', 'meetings',
   'audit',
 ] as const
 

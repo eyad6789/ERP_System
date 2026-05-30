@@ -4,17 +4,23 @@ import { RequireAuth } from './auth/RequireAuth'
 import { AppShell } from './components/AppShell'
 import { AdminPage } from './features/admin/AdminPage'
 import { AssetsPage } from './features/assets/AssetsPage'
+import { AttendancePage } from './features/attendance/AttendancePage'
 import { AuditPage } from './features/audit/AuditPage'
+import { CompliancePage } from './features/compliance/CompliancePage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
 import { DocumentsPage } from './features/documents/DocumentsPage'
 import { FinancePage } from './features/finance/FinancePage'
 import { FleetPage } from './features/fleet/FleetPage'
 import { GisPage } from './features/gis/GisPage'
+import { HelpDeskPage } from './features/helpdesk/HelpDeskPage'
 import { IncidentsPage } from './features/incidents/IncidentsPage'
 import { InventoryPage } from './features/inventory/InventoryPage'
 import { KnowledgePage } from './features/knowledge/KnowledgePage'
+import { LeavePage } from './features/leave/LeavePage'
 import { LoginPage } from './features/login/LoginPage'
+import { MeetingsPage } from './features/meetings/MeetingsPage'
 import { OperationsPage } from './features/operations/OperationsPage'
+import { PayrollPage } from './features/payroll/PayrollPage'
 import { PersonnelPage } from './features/personnel/PersonnelPage'
 import { ProcurementPage } from './features/procurement/ProcurementPage'
 import { ProfilePage } from './features/profile/ProfilePage'
@@ -48,6 +54,12 @@ export default function App() {
         <Route path="/fleet" element={<FleetPage />} />
         <Route path="/risk" element={<RiskPage />} />
         <Route path="/knowledge" element={<KnowledgePage />} />
+        <Route path="/attendance" element={<AttendancePage />} />
+        <Route path="/leave" element={<LeavePage />} />
+        <Route path="/payroll" element={<PayrollPage />} />
+        <Route path="/helpdesk" element={<HelpDeskPage />} />
+        <Route path="/compliance" element={<CompliancePage />} />
+        <Route path="/meetings" element={<MeetingsPage />} />
         <Route path="/audit" element={<AuditPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/security" element={<SecurityPage />} />

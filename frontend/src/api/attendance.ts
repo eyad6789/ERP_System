@@ -30,9 +30,7 @@ export interface AttendanceListParams {
   ordering?: string
 }
 
-export function fetchAttendance(
-  params: AttendanceListParams = {},
-): Promise<AttendanceListItem[]> {
+export function fetchList(params: AttendanceListParams = {}): Promise<AttendanceListItem[]> {
   const search = new URLSearchParams()
   if (params.q) search.set('q', params.q)
   if (params.ordering) search.set('ordering', params.ordering)
@@ -40,24 +38,21 @@ export function fetchAttendance(
   return api<AttendanceListItem[]>(`/attendance/${qs ? `?${qs}` : ''}`)
 }
 
-export function fetchAttendanceRecord(id: number): Promise<AttendanceDetail> {
+export function fetchOne(id: number): Promise<AttendanceDetail> {
   return api<AttendanceDetail>(`/attendance/${id}`)
 }
 
-export function createAttendance(body: AttendanceWriteBody): Promise<AttendanceDetail> {
+export function create(body: AttendanceWriteBody): Promise<AttendanceDetail> {
   return api<AttendanceDetail>('/attendance/', { method: 'POST', body: JSON.stringify(body) })
 }
 
-export function updateAttendance(
-  id: number,
-  body: Partial<AttendanceWriteBody>,
-): Promise<AttendanceDetail> {
+export function update(id: number, body: Partial<AttendanceWriteBody>): Promise<AttendanceDetail> {
   return api<AttendanceDetail>(`/attendance/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(body),
   })
 }
 
-export function removeAttendance(id: number): Promise<void> {
+export function remove(id: number): Promise<void> {
   return api<void>(`/attendance/${id}`, { method: 'DELETE' })
 }
