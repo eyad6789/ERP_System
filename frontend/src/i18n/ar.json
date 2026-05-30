@@ -30,7 +30,13 @@
     "payroll": "الرواتب",
     "helpdesk": "مكتب المساعدة",
     "compliance": "الامتثال",
-    "meetings": "الاجتماعات"
+    "meetings": "الاجتماعات",
+    "recruitment": "التوظيف",
+    "performance": "تقييم الأداء",
+    "training": "مركز التدريب",
+    "contracts": "العقود",
+    "announcements": "الإعلانات",
+    "events": "الأحداث"
   },
   "common": {
     "logout": "تسجيل الخروج",

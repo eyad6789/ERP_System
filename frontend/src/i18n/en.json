@@ -30,7 +30,13 @@
     "payroll": "Payroll",
     "helpdesk": "Help Desk",
     "compliance": "Compliance",
-    "meetings": "Meetings"
+    "meetings": "Meetings",
+    "recruitment": "Recruitment",
+    "performance": "Performance",
+    "training": "Training",
+    "contracts": "Contracts",
+    "announcements": "Announcements",
+    "events": "Events"
   },
   "common": {
     "logout": "Sign out",

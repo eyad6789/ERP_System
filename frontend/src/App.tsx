@@ -3,12 +3,15 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './auth/RequireAuth'
 import { AppShell } from './components/AppShell'
 import { AdminPage } from './features/admin/AdminPage'
+import { AnnouncementsPage } from './features/announcements/AnnouncementsPage'
 import { AssetsPage } from './features/assets/AssetsPage'
 import { AttendancePage } from './features/attendance/AttendancePage'
 import { AuditPage } from './features/audit/AuditPage'
 import { CompliancePage } from './features/compliance/CompliancePage'
+import { ContractsPage } from './features/contracts/ContractsPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
 import { DocumentsPage } from './features/documents/DocumentsPage'
+import { EventsPage } from './features/events/EventsPage'
 import { FinancePage } from './features/finance/FinancePage'
 import { FleetPage } from './features/fleet/FleetPage'
 import { GisPage } from './features/gis/GisPage'
@@ -21,13 +24,16 @@ import { LoginPage } from './features/login/LoginPage'
 import { MeetingsPage } from './features/meetings/MeetingsPage'
 import { OperationsPage } from './features/operations/OperationsPage'
 import { PayrollPage } from './features/payroll/PayrollPage'
+import { PerformancePage } from './features/performance/PerformancePage'
 import { PersonnelPage } from './features/personnel/PersonnelPage'
 import { ProcurementPage } from './features/procurement/ProcurementPage'
 import { ProfilePage } from './features/profile/ProfilePage'
 import { ProjectsPage } from './features/projects/ProjectsPage'
+import { RecruitmentPage } from './features/recruitment/RecruitmentPage'
 import { RiskPage } from './features/risk/RiskPage'
 import { SecurityPage } from './features/security/SecurityPage'
 import { SettingsPage } from './features/settings/SettingsPage'
+import { TrainingPage } from './features/training/TrainingPage'
 
 export default function App() {
   return (
@@ -60,6 +66,12 @@ export default function App() {
         <Route path="/helpdesk" element={<HelpDeskPage />} />
         <Route path="/compliance" element={<CompliancePage />} />
         <Route path="/meetings" element={<MeetingsPage />} />
+        <Route path="/recruitment" element={<RecruitmentPage />} />
+        <Route path="/performance" element={<PerformancePage />} />
+        <Route path="/training" element={<TrainingPage />} />
+        <Route path="/contracts" element={<ContractsPage />} />
+        <Route path="/announcements" element={<AnnouncementsPage />} />
+        <Route path="/events" element={<EventsPage />} />
         <Route path="/audit" element={<AuditPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/security" element={<SecurityPage />} />
